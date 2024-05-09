@@ -60,41 +60,19 @@ public class ClientCarPanel extends TabbedForm {
     ArrayList<Object[]> cars = getCars();
 
     for (Object[] carData : cars) {
-        JPanel carPanel = new JPanel(new BorderLayout());
-        carPanel.setBorder(BorderFactory.createTitledBorder((String) carData[0])); // Set car name as border title
-
-        try {
-            byte[] imageData = (byte[]) carData[4];
-            ImageIcon imageIcon = new ImageIcon(imageData);
-
-            Image scaledImage = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            imageIcon = new ImageIcon(scaledImage);
-            JLabel imageLabel = new JLabel(imageIcon);
-            carPanel.add(imageLabel, BorderLayout.NORTH);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JLabel placeholderLabel = new JLabel("Image not available");
-            carPanel.add(placeholderLabel, BorderLayout.NORTH);
+        JPanel prodPanel = new JPanel();
+        
+        prodPanel.setSize(181, 248);
+        
+        byte[] imageData = (byte[]) carData[4];
+        ImageIcon imageIcon = new ImageIcon(imageData);
+        
+        if((boolean) carData[3]){
+           prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1]));
+          
+           mainPanel.add(prodPanel);  
         }
-
-        JPanel infoPanel = new JPanel(new GridLayout(4, 1));
-        
-        JLabel rent_price = new JLabel("RENT PRICE : " + carData[2]);
-        JLabel seatsLabel = new JLabel("NO OF SEATS : " + carData[1]);
-        JLabel availableLabel = new JLabel("Available : " + carData[3]);
-        JButton rentButton = new JButton("Rent");
-        rentButton.setForeground(Color.WHITE);
-   
-        infoPanel.add(rent_price);
-        infoPanel.add(seatsLabel);
-        infoPanel.add(availableLabel);
-        infoPanel.add(rentButton);
-
-        carPanel.add(infoPanel, BorderLayout.SOUTH);
-        
-        mainPanel.add(carPanel); // Add car panel to main panel
-       }
+      }
     }
     
     @SuppressWarnings("unchecked")
