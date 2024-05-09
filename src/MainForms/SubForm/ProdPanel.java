@@ -2,6 +2,8 @@ package MainForms.SubForm;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 
 public class ProdPanel extends javax.swing.JPanel {
@@ -85,7 +87,8 @@ public class ProdPanel extends javax.swing.JPanel {
 
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
         // TODO add your handling code here:
-        new TransactionForm(image2, car_name_txt.getText(), no_of_seats,Double.parseDouble(price_txt.getText()))
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        new TransactionForm(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,Double.parseDouble(price_txt.getText()))
                            .setVisible(true);
     }//GEN-LAST:event_rent_btnActionPerformed
 

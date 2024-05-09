@@ -1,28 +1,34 @@
 package MainForms.SubForm;
 
+import Service.Database;
 import Utils.Utils;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class TransactionForm extends javax.swing.JFrame {
 
-    private Utils util;
+public class TransactionForm extends javax.swing.JDialog {
+
+     private Utils util;
+     private Database db;
     
-    public TransactionForm(){
-        
-    }
-    
-    public TransactionForm(ImageIcon image,String car_name , int no_of_seats, double price_txt) {
+    public TransactionForm(java.awt.Frame parent, boolean modal, 
+        ImageIcon image,String car_name , int no_of_seats, double price_txt) {
+        super(parent, modal);
         initComponents();
-     
+        
         util = new Utils();
+        db = new Database();
         photoHolder_lbl.setIcon(image);
         car_name_lbl.setText(car_name);
         no_of_seats_lbl.setText(String.valueOf(no_of_seats));
         price_lbl.setText(String.valueOf(price_txt));
     }
 
-
+                                    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -44,7 +50,6 @@ public class TransactionForm extends javax.swing.JFrame {
         name_txt = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setResizable(false);
 
         jLabel5.setText("No. of days to rent");
 
@@ -90,7 +95,7 @@ public class TransactionForm extends javax.swing.JFrame {
                         .addComponent(name_txt))
                     .addComponent(no_of_days_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -138,13 +143,13 @@ public class TransactionForm extends javax.swing.JFrame {
                             .addComponent(jLabel1)
                             .addComponent(price_lbl))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                        .addComponent(rent_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(rent_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(no_of_days_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -159,25 +164,30 @@ public class TransactionForm extends javax.swing.JFrame {
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
         // TODO add your handling code here:
-        if(util.fieldChecker(jPanel1)){
-          showMessageDialog(jPanel1, "Please fill up all the required fields!");
-        }
-    }//GEN-LAST:event_rent_btnActionPerformed
-
-    public static void main(String args[]) {
-    
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TransactionForm().setVisible(true);
+         if(util.fieldChecker(jPanel1)){
+            showMessageDialog(jPanel1, "Please fill up all the required fields!");
+        }else{
+            String sqlQuery = "INSERT INTO TRANSACTION (RENT_START, NO_OF_DAYS ,"
+                    + " AMOUNT_TO_PAY , CLIENT_NAME , CLIENT_"
+                    + "PHONENUM) VALUES (?,?,?,?,?)";
+            
+//            LocalDate date = new LocalDate();
+//            date
+            
+            try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser() , db.getUser());
+                PreparedStatement statement = con.prepareStatement(sqlQuery)){
+                
+//               statement.setDate(i, );
+                 
+            }catch(SQLException e){
+                e.printStackTrace();
             }
-        });
-    }
+         }
+    }//GEN-LAST:event_rent_btnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel car_name_lbl;
