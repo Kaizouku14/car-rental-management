@@ -1,7 +1,8 @@
-package MainForms.SubForm;
+package MainForms.Panels;
 
 import Components.tabbed.TabbedForm;
 import MainForms.AdminForm;
+import MainForms.Dialogs.ManageCarDialog;
 import Service.Database;
 import Utils.Utils; 
 import java.awt.Image;
@@ -13,7 +14,12 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 public class AdminCarPanel extends TabbedForm {
     
@@ -21,14 +27,17 @@ public class AdminCarPanel extends TabbedForm {
     private int no_of_seats;
     private double rent_price;
     private boolean availability = true;
+    private JFrame parentFrame;
     private Database db;
     private Utils util;
 
-    
-    public AdminCarPanel() {
+    public AdminCarPanel(JFrame frame) {
+        this.parentFrame = frame;
         db = new Database();
         util = new Utils();
         initComponents();
+        renderDataToTable();
+        registerTableRowSelectionListener();
     }
 
     @SuppressWarnings("unchecked")
@@ -42,12 +51,12 @@ public class AdminCarPanel extends TabbedForm {
         noSeaters_txt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
         uploadImage = new javax.swing.JButton();
         rent_price_txt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        car_table = new javax.swing.JTable();
 
-        setBackground(new java.awt.Color(51, 51, 51));
         setPreferredSize(new java.awt.Dimension(903, 561));
 
         photoHolder_lbl.setBackground(new java.awt.Color(153, 153, 153));
@@ -80,19 +89,6 @@ public class AdminCarPanel extends TabbedForm {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Carl name");
 
-        jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 760, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 201, Short.MAX_VALUE)
-        );
-
         uploadImage.setText("Upload ");
         uploadImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -105,47 +101,70 @@ public class AdminCarPanel extends TabbedForm {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Rent price");
 
+        car_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID ", "CAR NAME", "NO. OF SEATS", "RENT PRICE", "AVAILABILITY"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        car_table.setPreferredSize(new java.awt.Dimension(762, 203));
+        car_table.setRowHeight(35);
+        car_table.setShowHorizontalLines(true);
+        car_table.setShowVerticalLines(true);
+        jScrollPane1.setViewportView(car_table);
+        if (car_table.getColumnModel().getColumnCount() > 0) {
+            car_table.getColumnModel().getColumn(0).setResizable(false);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(103, 103, 103)
+                .addGap(70, 70, 70)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(carName_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rent_price_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(availability_cb)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(224, 224, 224)
+                                        .addComponent(jLabel3))
+                                    .addComponent(add_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(60, 60, 60)
+                                        .addComponent(availability_cb)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(carName_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
+                                .addGap(60, 60, 60)
+                                .addComponent(rent_price_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(193, 193, 193)
-                                .addComponent(jLabel3))
-                            .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(37, 37, 37)
+                                .addComponent(photoHolder_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(108, 108, 108))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(uploadImage, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(134, 134, 134))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(add_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(photoHolder_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(129, 129, 129))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(uploadImage, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(157, 157, 157))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,14 +187,14 @@ public class AdminCarPanel extends TabbedForm {
                             .addComponent(carName_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(rent_price_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(availability_cb))
-                        .addGap(7, 7, 7)
-                        .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(42, 42, 42)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(availability_cb))))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -191,15 +210,18 @@ public class AdminCarPanel extends TabbedForm {
             rent_price = Double.parseDouble(rent_price_txt.getText()); 
             
           try {
-              InputStream is = new FileInputStream(new File(path2));
-                 
+              InputStream is = new FileInputStream(new File(path2));      
               int rowsAffected = insertData(sqlQuery, car_name, no_of_seats, rent_price ,availability ,is);
            
                 if(rowsAffected > 0){
                     photoHolder_lbl.setIcon(null);
                     util.clearFields(this);
+                    
                     new AdminForm().countAllCar();
                     new AdminForm().countAvailableCars();
+                    renderDataToTable();
+                    registerTableRowSelectionListener();
+                    
                     showMessageDialog(this,"Added Successfully!");  
                }else{
                    showMessageDialog(this,"Insertion failed!"); 
@@ -264,14 +286,57 @@ public class AdminCarPanel extends TabbedForm {
         return -1;
     }
     
+    private void renderDataToTable(){
+         String rent_status, sqlQuery = "SELECT * FROM CARS";
+        
+         try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+             PreparedStatement statement = con.prepareStatement(sqlQuery);
+             ResultSet result = statement.executeQuery()) {
+             DefaultTableModel model = (DefaultTableModel) car_table.getModel();
+             
+             while(result.next()){ 
+                if(result.getBoolean("AVAILABILITY")) rent_status = "available";
+                else rent_status = "rented";     
+                        
+                Object[] row = {result.getInt("CAR_ID"), result.getString("CAR_NAME"), result.getInt("NO_OF_SEATS"), 
+                                result.getDouble("RENT_PRICE"), rent_status};
+                model.addRow(row);
+             }
+             
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }  
+    }   
+    
+     private void registerTableRowSelectionListener() {
+        ListSelectionModel selectionModel = car_table.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+               if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
+                int selectedRow = car_table.getSelectedRow();
+                 if (selectedRow != -1) {
+                     
+                   Object[] values = new Object[5]; 
+                   for(int i = 0; i < values.length; i++){
+                       values[i] = car_table.getValueAt(selectedRow, i);
+                   }  
+                   
+                  new ManageCarDialog(parentFrame,true).setVisible(true); 
+                }
+               }
+             }
+          });
+     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton add_btn;
     private javax.swing.JCheckBox availability_cb;
     private javax.swing.JTextField carName_txt;
+    private javax.swing.JTable car_table;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField noSeaters_txt;
     private javax.swing.JLabel photoHolder_lbl;
     private javax.swing.JTextField rent_price_txt;

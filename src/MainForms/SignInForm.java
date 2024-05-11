@@ -1,6 +1,6 @@
 package MainForms;
 
-import Service.Database;
+import Service.*;
 import Utils.*;
 import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.event.ActionListener;
@@ -12,11 +12,13 @@ public class SignInForm extends javax.swing.JPanel {
     private String username , email , password;
     private Utils util;
     private Database db;
+    private Authentication auth;
     
     public SignInForm() {
         initComponents();
         util = new Utils();
         db = new Database();
+        auth = new Authentication();
     }
 
     public void addEventBackLogin(ActionListener event) {
@@ -177,8 +179,6 @@ public class SignInForm extends javax.swing.JPanel {
 
     private void register_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_register_buttonActionPerformed
         // TODO add your handling code here:
-       String sqlQuery = "INSERT INTO ACCOUNTS(USERNAME , EMAIL , PASSWORD, ROLE) VALUES(?,?,?,?)";
-
         if(util.fieldChecker(signinPanel)){
             showMessageDialog(signinPanel, "Please fill up all the required fields!");
         }else{  
@@ -187,23 +187,26 @@ public class SignInForm extends javax.swing.JPanel {
                 username = username_txt.getText();
                 email = email_txt.getText();
                 password = password_txt.getText();
-          
-             int rowsAffected = insertData(sqlQuery, username, email, password);
-             
-             if(rowsAffected > 0){
-                util.clearFields(signinPanel);
-                // switch to login form
-                Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this); 
-                mainFrame.switchToLoginForm();
-             }
+                
+                if(auth.checkEmail(email)){    
+                   showMessageDialog(signinPanel, "This email is alredy in use, please try other email!");
+                }else{
+                   if(insertData(username, email, password)){
+                      util.clearFields(signinPanel);
+                      Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this);   // switch to login form
+                      mainFrame.switchToLoginForm();
+                   }
+                }
             }else{
                showMessageDialog(signinPanel, "password does not match!"); 
             }
         }
     }//GEN-LAST:event_register_buttonActionPerformed
 
-    private int insertData(String sqlQuery, String username ,String email ,String password){
+    private boolean insertData(String username ,String email ,String password){
         
+       String sqlQuery = "INSERT INTO ACCOUNTS(USERNAME , EMAIL , PASSWORD, ROLE) VALUES(?,?,?,?)";
+ 
         try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = con.prepareStatement(sqlQuery)) {
              
@@ -212,15 +215,15 @@ public class SignInForm extends javax.swing.JPanel {
             statement.setString(3, password);
             statement.setString(4, "Client");
             
-            return statement.executeUpdate();
+            return statement.executeUpdate() > 0;
         
         }catch(SQLException e) {
             e.printStackTrace();
         }    
         
-        return -1;
+        return false;
     }
-    
+     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Components.textfields.PasswordField confirmpass_txt;

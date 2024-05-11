@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
  //TODO : Update total of cars and total of avail cars when a car is added.
+ //TODO : Set transaction for chart
 
 public class AdminForm extends javax.swing.JFrame {
     
     private Database db;
   
     public AdminForm(){
-        //Default Constructor 
+        db = new Database();
+        countAllCar();
+        countAvailableCars();
     }
   
     public AdminForm(String username, String email) {
@@ -197,8 +200,6 @@ public class AdminForm extends javax.swing.JFrame {
         setContentPane(body);
         revalidate();
         repaint();
-        
-        
     }
     
     public void countAllCar(){

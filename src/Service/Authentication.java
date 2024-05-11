@@ -46,6 +46,24 @@ public class Authentication{
     return false; 
   }
   
+   public boolean checkEmail(String email){
+        String sqlQuery = "SELECT * FROM ACCOUNTS WHERE EMAIL = ?";
+        
+        try(Connection con = DriverManager.getConnection(db.getUrl() ,db.getUser() ,db.getPass());
+            PreparedStatement statement = con.prepareStatement(sqlQuery);
+            ResultSet result = statement.executeQuery()){
+            
+            while(result.next()){
+               return email.equals(result.getString("EMAIL"));
+            }
+            
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+  
   
   
 }

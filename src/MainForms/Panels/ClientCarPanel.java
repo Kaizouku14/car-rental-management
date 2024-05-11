@@ -1,4 +1,4 @@
-package MainForms.SubForm;
+package MainForms.Panels;
 
 import Components.tabbed.TabbedForm;
 import Service.Database;
@@ -6,6 +6,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.sql.*;
 import javax.swing.*;
+
+//TODO : return car `Use Foreign Key` for the transaction
+//TODO : rent receipt
+//TODO : search bar
 
 public class ClientCarPanel extends TabbedForm {
 
@@ -61,7 +65,6 @@ public class ClientCarPanel extends TabbedForm {
 
     for (Object[] carData : cars) {
         JPanel prodPanel = new JPanel();
-        
         prodPanel.setSize(181, 248);
         
         byte[] imageData = (byte[]) carData[4];
@@ -69,7 +72,6 @@ public class ClientCarPanel extends TabbedForm {
         
         if((boolean) carData[3]){
            prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1]));
-          
            mainPanel.add(prodPanel);  
         }
       }

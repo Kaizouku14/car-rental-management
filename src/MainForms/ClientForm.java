@@ -6,6 +6,7 @@ import Components.drawer.ClientDrawerBuilder;
 import raven.drawer.Drawer;
 import raven.popup.GlassPanePopup;
 import Components.tabbed.WindowsTabbed;
+import MainForms.Panels.ClientCarPanel;
 
 public class ClientForm extends javax.swing.JFrame {
     
@@ -39,7 +40,7 @@ public class ClientForm extends javax.swing.JFrame {
 
         body = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        rent_now_btn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -54,7 +55,12 @@ public class ClientForm extends javax.swing.JFrame {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/image-removebg-preview.png"))); // NOI18N
 
-        jButton1.setText("RENT NOW");
+        rent_now_btn.setText("RENT NOW");
+        rent_now_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rent_now_btnActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("NISSAN GT-R 2024");
@@ -99,7 +105,7 @@ public class ClientForm extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(312, 312, 312))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rent_now_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(361, 361, 361))))
         );
         layout.setVerticalGroup(
@@ -120,13 +126,18 @@ public class ClientForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(rent_now_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(62, 62, 62))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void rent_now_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_now_btnActionPerformed
+        // TODO add your handling code here:
+        WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel());
+    }//GEN-LAST:event_rent_now_btnActionPerformed
 
     public static void clientForm(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -138,12 +149,12 @@ public class ClientForm extends javax.swing.JFrame {
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel body;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JButton rent_now_btn;
     // End of variables declaration//GEN-END:variables
 }
