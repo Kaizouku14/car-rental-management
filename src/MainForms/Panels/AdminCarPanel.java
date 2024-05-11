@@ -19,6 +19,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class AdminCarPanel extends TabbedForm {
@@ -30,6 +31,10 @@ public class AdminCarPanel extends TabbedForm {
     private JFrame parentFrame;
     private Database db;
     private Utils util;
+    
+    public AdminCarPanel(){
+        //default constructor
+    }
 
     public AdminCarPanel(JFrame frame) {
         this.parentFrame = frame;
@@ -101,16 +106,18 @@ public class AdminCarPanel extends TabbedForm {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Rent price");
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+
         car_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID ", "CAR NAME", "NO. OF SEATS", "RENT PRICE", "AVAILABILITY"
+                "ID ", "CAR NAME", "NO. OF SEATS", "RENT PRICE", "AVAILABILITY", "CAR IMAGE"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -118,13 +125,9 @@ public class AdminCarPanel extends TabbedForm {
             }
         });
         car_table.setPreferredSize(new java.awt.Dimension(762, 203));
-        car_table.setRowHeight(35);
         car_table.setShowHorizontalLines(true);
         car_table.setShowVerticalLines(true);
         jScrollPane1.setViewportView(car_table);
-        if (car_table.getColumnModel().getColumnCount() > 0) {
-            car_table.getColumnModel().getColumn(0).setResizable(false);
-        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -193,8 +196,8 @@ public class AdminCarPanel extends TabbedForm {
                             .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(availability_cb))))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -245,7 +248,7 @@ public class AdminCarPanel extends TabbedForm {
             browseImage();
     }//GEN-LAST:event_uploadImageActionPerformed
 
-    private void browseImage() {
+    public void browseImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showOpenDialog(this);
@@ -294,12 +297,19 @@ public class AdminCarPanel extends TabbedForm {
              ResultSet result = statement.executeQuery()) {
              DefaultTableModel model = (DefaultTableModel) car_table.getModel();
              
+             
+            car_table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer());
              while(result.next()){ 
                 if(result.getBoolean("AVAILABILITY")) rent_status = "available";
-                else rent_status = "rented";     
-                        
+                else rent_status = "rented";    
+                
+                  Blob blob = result.getBlob("CAR_IMAGE");
+                  byte[] imageData = blob.getBytes(1, (int) blob.length());
+                  ImageIcon imageIcon = new ImageIcon(imageData);
+                
                 Object[] row = {result.getInt("CAR_ID"), result.getString("CAR_NAME"), result.getInt("NO_OF_SEATS"), 
-                                result.getDouble("RENT_PRICE"), rent_status};
+                                result.getDouble("RENT_PRICE"), rent_status , imageIcon};
+             
                 model.addRow(row);
              }
              
@@ -308,21 +318,37 @@ public class AdminCarPanel extends TabbedForm {
         }  
     }   
     
+     private static class ImageRenderer extends DefaultTableCellRenderer {
+        @Override
+        protected void setValue(Object value) {
+            if (value instanceof ImageIcon) {
+               ImageIcon icon = (ImageIcon) value;
+                
+               Image image = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+               setIcon(new ImageIcon(image));
+            } else {
+                setText((value == null) ? "" : value.toString());
+            }
+        }
+    }
+    
      private void registerTableRowSelectionListener() {
         ListSelectionModel selectionModel = car_table.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
                 int selectedRow = car_table.getSelectedRow();
-                 if (selectedRow != -1) {
+                 if (selectedRow != -1) {  
                      
-                   Object[] values = new Object[5]; 
-                   for(int i = 0; i < values.length; i++){
-                       values[i] = car_table.getValueAt(selectedRow, i);
-                   }  
-                   
-                  new ManageCarDialog(parentFrame,true).setVisible(true); 
-                }
+                    Object[] data = new Object[6];
+
+                    for(int i = 0; i < data.length; i++){
+                        data[i] = car_table.getValueAt(selectedRow, i);
+                    }
+                        
+                    new ManageCarDialog(parentFrame ,true ,(int) data[0] ,(String) data[1] ,(int) data[2] ,(double) data[3] ,(String) data[4] ,(ImageIcon) data[5])
+                                .setVisible(true);
+                 }
                }
              }
           });
