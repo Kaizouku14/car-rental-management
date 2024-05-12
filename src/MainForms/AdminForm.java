@@ -40,9 +40,8 @@ public class AdminForm extends javax.swing.JFrame {
         WindowsTabbed.getInstance().install(this, body);
         
         chart.setTitle("Transaction Per Month");
-        chart.addLegend("Top Costumer", Color.decode("#7b4397"), Color.decode("#dc2430"));
-        chart.addLegend("Top Car", Color.decode("#e65c00"), Color.decode("#F9D423"));
         chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
+        chart.addLegend("Borrowed Cars", Color.decode("#7b4397"), Color.decode("#dc2430"));
         
         db = new Database();
         setData();
@@ -248,26 +247,28 @@ public class AdminForm extends javax.swing.JFrame {
      public void setData() {
         List<ModelData> lists = new ArrayList<>();
 
-        String sql = "SELECT rent_start, SUM(amount_to_pay) AS total_amount " +
-                     "FROM transaction " +
-                     "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
-                     "ORDER BY rent_start ASC LIMIT 7";
+        String sql = "SELECT rent_start, " +
+                    "SUM(amount_to_pay) AS total_amount, " +
+                    "COUNT(DISTINCT car_to_rent) AS car_count " +
+                    "FROM transaction " +
+                    "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
+                    "ORDER BY rent_start ASC LIMIT 7";
 
         try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
 
- 
             while (resultSet.next()) {
                 LocalDate date = resultSet.getDate("rent_start").toLocalDate();
                 double amount = resultSet.getDouble("total_amount");
+                int no_of_cars = resultSet.getInt("car_count");
 
                 String monthName = date.format(DateTimeFormatter.ofPattern("MMMM"));
-                lists.add(new ModelData(monthName, amount, 0 , amount));
+                lists.add(new ModelData(monthName, amount, no_of_cars));
             }
 
             for (ModelData d : lists) {
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), 0, 0}));
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getProfit() , d.getNoOfCars()}));
             }
 
             chart.start();
