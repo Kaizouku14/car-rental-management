@@ -1,4 +1,4 @@
-package Components.chart;
+package Components.chart.Spline;
 
 public class SplinePoint {
 

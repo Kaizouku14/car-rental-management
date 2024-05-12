@@ -1,4 +1,4 @@
-package Components.chart;
+package Components.chart.Spline;
 
 import java.util.ArrayList;
 import java.util.List;

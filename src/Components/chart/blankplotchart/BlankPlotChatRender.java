@@ -1,5 +1,5 @@
 
-package Components.chart;
+package Components.chart.blankplotchart;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;

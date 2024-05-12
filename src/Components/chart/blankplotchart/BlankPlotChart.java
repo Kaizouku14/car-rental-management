@@ -1,5 +1,7 @@
-package Components.chart;
+package Components.chart.blankplotchart;
 
+import Components.chart.Spline.NiceScale;
+import Components.chart.Spline.SeriesSize;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;

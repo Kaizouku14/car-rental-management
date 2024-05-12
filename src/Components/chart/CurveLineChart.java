@@ -1,5 +1,11 @@
 package Components.chart;
 
+import Components.chart.models.ModelChart;
+import Components.chart.models.ModelLegend;
+import Components.chart.Spline.SplinePoint;
+import Components.chart.Spline.Spline;
+import Components.chart.blankplotchart.BlankPlotChatRender;
+import Components.chart.blankplotchart.BlankPlotChart;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;

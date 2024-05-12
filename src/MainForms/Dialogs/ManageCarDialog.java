@@ -4,7 +4,6 @@ import MainForms.Panels.AdminCarPanel;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
-
 public class ManageCarDialog extends javax.swing.JDialog{
     
     private boolean availability = false;
@@ -78,8 +77,6 @@ public class ManageCarDialog extends javax.swing.JDialog{
         // TODO add your handling code here:
         new AdminCarPanel().browseImage();
     }//GEN-LAST:event_uploadImageActionPerformed
-    
-    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel photoHolder_lbl;

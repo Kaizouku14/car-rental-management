@@ -11,8 +11,6 @@ import raven.drawer.component.header.SimpleHeaderData;
 import raven.drawer.component.menu.*;
 import raven.swing.AvatarIcon;
 import Components.tabbed.WindowsTabbed;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 public class AdminDrawerBuilder extends SimpleDrawerBuilder{
     
@@ -39,7 +37,7 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
        
           String menus[][] = {
             {"~MANAGE CARS~"},
-            {"Car"},
+            {"Car","Rented Cars"},
             {"~OTHERS~"},
             {"Settings"},
             {"Logout"}};
@@ -61,15 +59,16 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
                         
                         if(index == 0){
                             WindowsTabbed.getInstance().addTab("Cars", new AdminCarPanel(CurrentFormHolder.getInstance().getCurrentForm()));
+                        }else if(index == 0 && subIndex == 0 ){
+                           //rented cars panel
                         }else if(index == 2){
                             CurrentFormHolder.getInstance().closeCurrentForm(); // Close current form
                             Main main = new Main();
                             main.setVisible(true);
-                        }    
+                        }
                     }
                  });
-        
-                      //Used to disable a menu 
+                      //Disable a menu 
 //         .setMenuValidation(new MenuValidation(){
 //                         @Override
 //                        public boolean menuValidation(int index, int subIndex) {

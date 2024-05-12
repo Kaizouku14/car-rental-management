@@ -1,4 +1,4 @@
-package Components.chart;
+package Components.chart.models;
 
 public class ModelChart {
 

@@ -1,7 +1,7 @@
 package MainForms;
 
-import Utils.ModelData;
-import Components.chart.ModelChart;
+import Components.chart.models.ModelData;
+import Components.chart.models.ModelChart;
 import Utils.*;
 import Components.drawer.AdminDrawerBuilder;
 import raven.drawer.Drawer;
@@ -10,6 +10,8 @@ import Components.tabbed.WindowsTabbed;
 import Service.Database;
 import java.awt.Color;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +40,8 @@ public class AdminForm extends javax.swing.JFrame {
         WindowsTabbed.getInstance().install(this, body);
         
         chart.setTitle("Transaction Per Month");
-        chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
-        chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Top Costumer", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Top Car", Color.decode("#e65c00"), Color.decode("#F9D423"));
         chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
         
         db = new Database();
@@ -222,63 +224,59 @@ public class AdminForm extends javax.swing.JFrame {
     }
     
     public void countAvailableCars() {
-        int total_of_carAvailable = 0;
-        String sqlQuery = "SELECT COUNT(*) AS available_car_count FROM cars WHERE availability = ?";
-        
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery)) {
-             
-            statement.setBoolean(1, true);
-             
-            try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) {
-                    int availableCarCount = result.getInt("available_car_count");
-                    total_of_carAvailable += availableCarCount;
+            int total_of_carAvailable = 0;
+            String sqlQuery = "SELECT COUNT(*) AS available_car_count FROM cars WHERE availability = ?";
+
+            try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+                 PreparedStatement statement = con.prepareStatement(sqlQuery)) {
+
+                statement.setBoolean(1, true);
+
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) {
+                        int availableCarCount = result.getInt("available_car_count");
+                        total_of_carAvailable += availableCarCount;
+                    }
                 }
+
+               availableCar_lbl.setText(String.valueOf(total_of_carAvailable));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }    
+        }
+
+     public void setData() {
+        List<ModelData> lists = new ArrayList<>();
+
+        String sql = "SELECT rent_start, SUM(amount_to_pay) AS total_amount " +
+                     "FROM transaction " +
+                     "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
+                     "ORDER BY rent_start ASC LIMIT 7";
+
+        try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+ 
+            while (resultSet.next()) {
+                LocalDate date = resultSet.getDate("rent_start").toLocalDate();
+                double amount = resultSet.getDouble("total_amount");
+
+                String monthName = date.format(DateTimeFormatter.ofPattern("MMMM"));
+                lists.add(new ModelData(monthName, amount, 0 , amount));
             }
-            
-           availableCar_lbl.setText(String.valueOf(total_of_carAvailable));
+
+            for (ModelData d : lists) {
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), 0, 0}));
+            }
+
+            chart.start();
         } catch (SQLException e) {
             e.printStackTrace();
-        }    
+        }
     }
     
     
-    public void setData(){
-          List<ModelData> lists = new ArrayList<>();
-             
-            lists.add(new ModelData("January", 50000.0, 30000.0, 20000.0));
-            lists.add(new ModelData("February", 45000.0, 25000.0, 20000.0));
-            lists.add(new ModelData("March", 60000.0, 35000.0, 25000.0));
-            lists.add(new ModelData("April", 55000.0, 32000.0, 23000.0));
-            lists.add(new ModelData("May", 48000.0, 28000.0, 20000.0));
-            lists.add(new ModelData("June", 52000.0, 30000.0, 22000.0));
-
-          for (int i = 0; i <= lists.size() - 1; i++) {
-                ModelData d = lists.get(i);
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
-          }
-           
-          chart.start();  //Start to show data with animation
-        
-           /*SQL query reference
-            *     String sql = "select DATE_FORMAT(Date,'%M') as `Month`, SUM(TotalAmount) "
-            *                    + "as Amount, SUM(TotalCost) as Cost, SUM(TotalProfit) "
-            *                    + "as Profit from orders group by DATE_FORMAT(Date,'%m%Y') order by Date DESC limit 7";
-            */
-          
-    }
-    
-//     private void test() {
-//        chart.clear();
-//        chart.addData(new ModelChart("January", new double[]{500, 50, 100}));
-//        chart.addData(new ModelChart("February", new double[]{600, 300, 150}));
-//        chart.addData(new ModelChart("March", new double[]{200, 50, 900}));
-//        chart.addData(new ModelChart("April", new double[]{480, 700, 100}));
-//        chart.addData(new ModelChart("May", new double[]{350, 540, 500}));
-//        chart.addData(new ModelChart("June", new double[]{450, 800, 100}));
-//        chart.start();
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availableCar_lbl;

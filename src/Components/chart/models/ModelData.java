@@ -1,6 +1,4 @@
-
-package Utils;
-
+package Components.chart.models;
 
 public class ModelData {
 

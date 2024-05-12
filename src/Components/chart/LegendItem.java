@@ -1,5 +1,6 @@
 package Components.chart;
 
+import Components.chart.models.ModelLegend;
 import java.awt.BasicStroke;
 import java.awt.Cursor;
 import java.awt.GradientPaint;

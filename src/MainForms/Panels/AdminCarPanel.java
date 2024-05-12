@@ -125,6 +125,7 @@ public class AdminCarPanel extends TabbedForm {
             }
         });
         car_table.setPreferredSize(new java.awt.Dimension(762, 203));
+        car_table.setRowHeight(35);
         car_table.setShowHorizontalLines(true);
         car_table.setShowVerticalLines(true);
         jScrollPane1.setViewportView(car_table);
@@ -225,7 +226,7 @@ public class AdminCarPanel extends TabbedForm {
                     renderDataToTable();
                     registerTableRowSelectionListener();
                     
-                    showMessageDialog(this,"Added Successfully!");  
+                   showMessageDialog(this,"Added Successfully!");  
                }else{
                    showMessageDialog(this,"Insertion failed!"); 
                }
