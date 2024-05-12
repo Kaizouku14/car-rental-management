@@ -11,6 +11,7 @@ import raven.drawer.component.header.SimpleHeaderData;
 import raven.drawer.component.menu.*;
 import raven.swing.AvatarIcon;
 import Components.tabbed.WindowsTabbed;
+import MainForms.Panels.AdminRentedCars;
 
 public class AdminDrawerBuilder extends SimpleDrawerBuilder{
     
@@ -55,12 +56,14 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
                   .addMenuEvent(new MenuEvent() {
                     @Override
                     public void selected(MenuAction action, int index, int subIndex) {
-                        System.out.println("Menu selected " + index + " " + subIndex);
                         
-                        if(index == 0){
-                            WindowsTabbed.getInstance().addTab("Cars", new AdminCarPanel(CurrentFormHolder.getInstance().getCurrentForm()));
-                        }else if(index == 0 && subIndex == 0 ){
-                           //rented cars panel
+                        if(index == 0){              
+                            
+                            if(index == 0 && subIndex == 1)
+                             WindowsTabbed.getInstance().addTab("Rented Card", new AdminRentedCars());
+                            else
+                             WindowsTabbed.getInstance().addTab("Cars", new AdminCarPanel(CurrentFormHolder.getInstance().getCurrentForm()));
+                            
                         }else if(index == 2){
                             CurrentFormHolder.getInstance().closeCurrentForm(); // Close current form
                             Main main = new Main();

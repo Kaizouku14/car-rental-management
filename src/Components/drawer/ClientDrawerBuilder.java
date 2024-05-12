@@ -57,7 +57,6 @@ public class ClientDrawerBuilder extends SimpleDrawerBuilder{
                   .addMenuEvent(new MenuEvent() {
                     @Override
                     public void selected(MenuAction action, int index, int subIndex) {
-                        System.out.println("Menu selected " + index + " " + subIndex);
                         
                         if(index == 0){
                             WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel());  
