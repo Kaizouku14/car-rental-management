@@ -22,6 +22,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+
+//TODO : r-render after transaction complete
+
 public class AdminCarPanel extends TabbedForm {
     
     private String car_name, path2;
@@ -262,7 +265,7 @@ public class AdminCarPanel extends TabbedForm {
                 BufferedImage bi = ImageIO.read(new File(path));
                 Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);   
                 ImageIcon icon = new ImageIcon(image);
-                photoHolder_lbl.setIcon(icon); // Set the resized ImageIcon to the label
+                photoHolder_lbl.setIcon(icon); 
                 path2 = path;
             } catch (IOException ex) {
                 Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);

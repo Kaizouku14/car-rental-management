@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
  //TODO : Update total of cars and total of avail cars when a car is added.
- //TODO : Set transaction for chart
 
 public class AdminForm extends javax.swing.JFrame {
     
@@ -187,23 +186,8 @@ public class AdminForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void adminForm(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AdminForm().setVisible(true);
-            }
-        });
-    }
     
-    public void showMainForm() {
-        WindowsTabbed.getInstance().showTabbed(true);
-        WindowsTabbed.getInstance().removeAllTabbed();
-        setContentPane(body);
-        revalidate();
-        repaint();
-    }
-    
-    public void countAllCar(){
+     public void countAllCar(){
         int totalOfCars = 0;
         String sqlQuery = "SELECT COUNT(*) AS car_count FROM cars";
         
@@ -229,7 +213,7 @@ public class AdminForm extends javax.swing.JFrame {
             try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
                  PreparedStatement statement = con.prepareStatement(sqlQuery)) {
 
-                statement.setBoolean(1, true);
+                statement.setBoolean(1, true);  
 
                 try (ResultSet result = statement.executeQuery()) {
                     if (result.next()) {
@@ -277,6 +261,21 @@ public class AdminForm extends javax.swing.JFrame {
         }
     }
     
+    public static void adminForm(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new AdminForm().setVisible(true);
+            }
+        });
+    }
+    
+    public void showMainForm() {
+        WindowsTabbed.getInstance().showTabbed(true);
+        WindowsTabbed.getInstance().removeAllTabbed();
+        setContentPane(body);
+        revalidate();
+        repaint();
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

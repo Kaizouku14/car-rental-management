@@ -3,12 +3,13 @@ package MainForms.Panels;
 import Components.tabbed.TabbedForm;
 import Service.Database;
 import java.sql.*;
-import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+//Car status `rented or returned`
 
 public class AdminRentedCars extends TabbedForm{
 
@@ -34,11 +35,11 @@ public class AdminRentedCars extends TabbedForm{
 
             },
             new String [] {
-                "TRANSACTION ID", "CLIENT NAME", "CONTACT NO.", "CAR RENTED", "RENT START", "NO. OF DAYS", "PAID AMOUNT"
+                "TRANSACTION ID", "CLIENT NAME", "CONTACT NO.", "CAR RENTED", "PLATE  NO.", "RENT START", "NO. OF DAYS", "PAID AMOUNT"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -132,16 +133,19 @@ public class AdminRentedCars extends TabbedForm{
         model.setRowCount(0);
     
         while (result.next()) {
-            Object[] row = {
-                result.getInt("TRANSACTION_ID"),
-                result.getString("CLIENT_NAME"),
-                result.getString("CLIENT_PHONENUM"),
-                result.getString("CAR_TO_RENT"),
-                result.getDate("RENT_START"),
-                result.getInt("NO_OF_DAYS"),
-                result.getDouble("AMOUNT_TO_PAY")
-            };
-            model.addRow(row);
+            if(result.getBoolean("STATUS")){
+               Object[] row = {
+                                result.getInt("TRANSACTION_ID"),
+                                result.getString("CLIENT_NAME"),
+                                result.getString("CLIENT_PHONENUM"),
+                                result.getInt("CAR_ID"),
+                                result.getString("CAR_TO_RENT"),
+                                result.getDate("RENT_START"),
+                                result.getInt("NO_OF_DAYS"),
+                                result.getDouble("AMOUNT_TO_PAY")
+                              };
+              model.addRow(row);
+            }
         }
     }
     
@@ -152,20 +156,49 @@ public class AdminRentedCars extends TabbedForm{
                if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
                 int selectedRow = transaction_table.getSelectedRow();
                  if (selectedRow != -1) {  
-                   int id = (int) transaction_table.getValueAt(selectedRow, 0);
-                   String car_name = (String) transaction_table.getValueAt(selectedRow,3);
-                   
-                   
+                   Object id =  transaction_table.getValueAt(selectedRow, 0);
+                   Object car_id = transaction_table.getValueAt(selectedRow,3);
+                   manageTransaction((int) id , (int) car_id);  
                  }
                }
             }
         });
     }
     
-    private void manageTransaction(int transaction_id){
-        
+    private void manageTransaction(int transaction_id, int car_id){
+      int result = JOptionPane.showConfirmDialog(this,"Return this car?", "Transaction",
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.QUESTION_MESSAGE);
+      
+        if(result ==  JOptionPane.YES_NO_OPTION){
+           updateCarAvailability(car_id);
+           updateTransactionStatus(transaction_id);
+           
+           renderDataToTable();
+        }
     }
-
+        
+    private void updateCarAvailability(int car_id){
+      String sqlQuery  = "UPDATE CARS SET AVAILABILITY = ? WHERE CAR_ID = ?";
+       returnCar(sqlQuery ,true , car_id);
+    }
+    
+    private void updateTransactionStatus(int transaction_id){
+        String sqlQuery  = "UPDATE TRANSACTION SET STATUS = ? WHERE TRANSACTION_ID = ?";
+        returnCar(sqlQuery ,false , transaction_id);
+    }
+    
+    private void returnCar(String sqlQuery ,boolean value,  int id){
+      try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+           PreparedStatement statement = con.prepareStatement(sqlQuery)){
+           statement.setBoolean(1, value);
+           statement.setInt(2,id);
+           statement.executeUpdate();
+       }catch(SQLException e){
+           e.printStackTrace();
+       } 
+    } 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField search_bar_txt;

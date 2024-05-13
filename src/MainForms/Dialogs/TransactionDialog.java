@@ -14,13 +14,15 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 
 public class TransactionDialog extends javax.swing.JDialog {
-
+    
      private Utils util;
      private Database db;
      private int car_id;
+     private boolean availability;
   
     public TransactionDialog(java.awt.Frame parent, boolean modal, 
-        ImageIcon image,String car_name , int no_of_seats, double price_txt,int car_id) {
+        ImageIcon image,String car_name , int no_of_seats, double price_txt,
+        int car_id, boolean availability ) {
         super(parent, modal);
         initComponents();
         
@@ -32,7 +34,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         price_lbl.setText(String.valueOf(price_txt));
         this.car_id = car_id;
     }
-                        
+                 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -170,7 +172,7 @@ public class TransactionDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
         // TODO add your handling code here:
          if(util.fieldChecker(jPanel1)){
@@ -183,19 +185,21 @@ public class TransactionDialog extends javax.swing.JDialog {
             int no_of_days = Integer.parseInt(no_of_days_txt.getText());
             double total_amount = Double.parseDouble(price_lbl.getText()) * Integer.parseInt(no_of_days_txt.getText());
              
-            if(insertTransaction(no_of_days , total_amount, client_name , phone_number, car_name)){
+            if(insertTransaction(no_of_days , total_amount, client_name , phone_number, car_name, car_id ,availability )){
+               rentCar(car_id);
                Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-               new ReceiptDialog(parentFrame, true).setVisible(true);                
+               new ReceiptDialog(parentFrame, true).setVisible(true);   
             }
          }
     }//GEN-LAST:event_rent_btnActionPerformed
 
-    public boolean insertTransaction(int no_of_days ,double total_amount, String client_name , String phone_number, String car_name, int car_id){
+    public boolean insertTransaction(int no_of_days ,double total_amount, String client_name , String phone_number, 
+                                     String car_name, int car_id, boolean availability ){
         
           String sqlQuery = "INSERT INTO TRANSACTION (RENT_START, NO_OF_DAYS ,"
                     + " AMOUNT_TO_PAY , CLIENT_NAME , CLIENT_"
-                    + "PHONENUM , CAR_TO_RENT, CAR_ID) VALUES (?,?,?,?,?,?,?)";
-                       
+                    + "PHONENUM , CAR_TO_RENT, CAR_ID, STATUS) VALUES (?,?,?,?,?,?,?,?)";
+          
             try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser() , db.getUser());
                 PreparedStatement statement = con.prepareStatement(sqlQuery)){
                 LocalDate currentDate = LocalDate.now();
@@ -207,14 +211,31 @@ public class TransactionDialog extends javax.swing.JDialog {
                statement.setString(5, phone_number);
                statement.setString(6, car_name);
                statement.setInt(7, car_id);
+               statement.setBoolean(8,availability);   
                
-               return statement.executeUpdate() > 0;
+              return statement.executeUpdate() > 0;
                 
             }catch(SQLException e){
                 e.printStackTrace();
             }
         
         return false;
+    }
+    
+    private void rentCar(int car_id){
+       String sqlQuery  = "UPDATE CARS SET AVAILABILITY = ? WHERE CAR_ID = ?";
+       
+       try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+           PreparedStatement statement = con.prepareStatement(sqlQuery)){
+          
+           statement.setBoolean(1, false);
+           statement.setInt(2,car_id);
+           
+           statement.executeUpdate();
+           
+       }catch(SQLException e){
+           e.printStackTrace();
+       }
     }
     
     

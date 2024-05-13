@@ -18,8 +18,7 @@ public class ClientCarPanel extends TabbedForm {
         initComponents();
         db = new Database();
         
-        mainPanel = new JPanel();   
-        renderCars();
+        mainPanel = new JPanel();  
         mainPanel = new JPanel(new GridLayout(0, 4 ,10 , 10)); 
         renderCars();
         
@@ -62,8 +61,7 @@ public class ClientCarPanel extends TabbedForm {
           return temp;
     }
 
-    
-    private void renderCars() {
+    public void renderCars() {
        ArrayList<Object[]> cars = getCars("SELECT * FROM CARS WHERE AVAILABILITY = ?", true);
        renderData(cars);
     }
@@ -141,9 +139,9 @@ public class ClientCarPanel extends TabbedForm {
         byte[] imageData = (byte[]) carData[4];
         ImageIcon imageIcon = new ImageIcon(imageData);
          
-      
        if((boolean) carData[3]){
-         prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1], (int) carData[5]));
+         prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], 
+                                    (int) carData[1], (int) carData[5], (boolean) carData[3]));
          mainPanel.add(prodPanel);
         }
       }
@@ -159,4 +157,5 @@ public class ClientCarPanel extends TabbedForm {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField search_bar_txt;
     // End of variables declaration//GEN-END:variables
+
 }
