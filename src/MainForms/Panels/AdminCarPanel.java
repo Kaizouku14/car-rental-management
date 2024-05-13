@@ -297,9 +297,8 @@ public class AdminCarPanel extends TabbedForm {
              PreparedStatement statement = con.prepareStatement(sqlQuery);
              ResultSet result = statement.executeQuery()) {
              DefaultTableModel model = (DefaultTableModel) car_table.getModel();
+             car_table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer());
              
-             
-            car_table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer());
              while(result.next()){ 
                 if(result.getBoolean("AVAILABILITY")) rent_status = "available";
                 else rent_status = "rented";    
