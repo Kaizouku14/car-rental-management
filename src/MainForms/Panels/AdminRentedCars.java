@@ -110,20 +110,6 @@ public class AdminRentedCars extends TabbedForm{
             e.printStackTrace();
         }
    }
-    
-     private void registerTableRowSelectionListener() {
-        ListSelectionModel selectionModel = transaction_table.getSelectionModel();
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-               if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
-                int selectedRow = transaction_table.getSelectedRow();
-                 if (selectedRow != -1) {  
-                     
-                 }
-               }
-             }
-          });
-     }
      
     private void filterSearch(String str) {
        String sqlQuery = "SELECT * FROM transaction WHERE client_name LIKE ?";
@@ -157,6 +143,27 @@ public class AdminRentedCars extends TabbedForm{
             };
             model.addRow(row);
         }
+    }
+    
+    private void registerTableRowSelectionListener() {
+        ListSelectionModel selectionModel = transaction_table.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+               if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
+                int selectedRow = transaction_table.getSelectedRow();
+                 if (selectedRow != -1) {  
+                   int id = (int) transaction_table.getValueAt(selectedRow, 0);
+                   String car_name = (String) transaction_table.getValueAt(selectedRow,3);
+                   
+                   
+                 }
+               }
+            }
+        });
+    }
+    
+    private void manageTransaction(int transaction_id){
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

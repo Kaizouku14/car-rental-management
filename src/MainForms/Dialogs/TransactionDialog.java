@@ -17,9 +17,10 @@ public class TransactionDialog extends javax.swing.JDialog {
 
      private Utils util;
      private Database db;
+     private int car_id;
   
     public TransactionDialog(java.awt.Frame parent, boolean modal, 
-        ImageIcon image,String car_name , int no_of_seats, double price_txt) {
+        ImageIcon image,String car_name , int no_of_seats, double price_txt,int car_id) {
         super(parent, modal);
         initComponents();
         
@@ -29,6 +30,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         car_name_lbl.setText(car_name);
         no_of_seats_lbl.setText(String.valueOf(no_of_seats));
         price_lbl.setText(String.valueOf(price_txt));
+        this.car_id = car_id;
     }
                         
     @SuppressWarnings("unchecked")
@@ -188,11 +190,11 @@ public class TransactionDialog extends javax.swing.JDialog {
          }
     }//GEN-LAST:event_rent_btnActionPerformed
 
-    public boolean insertTransaction(int no_of_days ,double total_amount, String client_name , String phone_number, String car_name){
+    public boolean insertTransaction(int no_of_days ,double total_amount, String client_name , String phone_number, String car_name, int car_id){
         
           String sqlQuery = "INSERT INTO TRANSACTION (RENT_START, NO_OF_DAYS ,"
                     + " AMOUNT_TO_PAY , CLIENT_NAME , CLIENT_"
-                    + "PHONENUM , CAR_TO_RENT) VALUES (?,?,?,?,?,?)";
+                    + "PHONENUM , CAR_TO_RENT, CAR_ID) VALUES (?,?,?,?,?,?,?)";
                        
             try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser() , db.getUser());
                 PreparedStatement statement = con.prepareStatement(sqlQuery)){
@@ -204,6 +206,7 @@ public class TransactionDialog extends javax.swing.JDialog {
                statement.setString(4, client_name);
                statement.setString(5, phone_number);
                statement.setString(6, car_name);
+               statement.setInt(7, car_id);
                
                return statement.executeUpdate() > 0;
                 

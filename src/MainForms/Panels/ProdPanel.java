@@ -8,10 +8,10 @@ import javax.swing.SwingUtilities;
 
 public class ProdPanel extends javax.swing.JPanel {
     
-    private int no_of_seats;
+    private int no_of_seats , car_id;
     private ImageIcon image2;
 
-    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats) {
+    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats, int car_id) {
         initComponents();
         
        Image scaledImage = image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
@@ -22,6 +22,7 @@ public class ProdPanel extends javax.swing.JPanel {
        car_name_txt.setText(car_name);
        price_txt.setText(String.valueOf(price)); 
        this.no_of_seats = no_of_seats;
+       this.car_id = car_id;
     }
 
     @SuppressWarnings("unchecked")
@@ -104,7 +105,7 @@ public class ProdPanel extends javax.swing.JPanel {
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
         // TODO add your handling code here:
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        new TransactionDialog(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,Double.parseDouble(price_txt.getText()))
+        new TransactionDialog(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,Double.parseDouble(price_txt.getText()), car_id)
                            .setVisible(true);
     }//GEN-LAST:event_rent_btnActionPerformed
 

@@ -28,52 +28,44 @@ public class ClientCarPanel extends TabbedForm {
         jPanel1.add(scrollPane); 
     }
 
-    private ArrayList<Object[]> getCars() {
-        ArrayList<Object[]> temp = new ArrayList<>();
-        String sqlQuery = "SELECT * FROM CARS";
+    private ArrayList<Object[]> getCars(String sqlQuery, Object values) {
+          ArrayList<Object[]> temp = new ArrayList<>();
 
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery);
-             ResultSet result = statement.executeQuery()) {
+          try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+               PreparedStatement statement = con.prepareStatement(sqlQuery)) {
 
-            while (result.next()) {
-                Object[] carData = new Object[5]; 
-                carData[0] = result.getString("CAR_NAME");
-                carData[1] = result.getInt("NO_OF_SEATS");
-                carData[2] = result.getDouble("RENT_PRICE");
-                carData[3] = result.getBoolean("AVAILABILITY");
-                
-                Blob imageBlob = result.getBlob("CAR_IMAGE");
-                carData[4] = imageBlob.getBytes(1, (int) imageBlob.length());
+              if(values instanceof Boolean){
+                statement.setBoolean(1, (boolean) values);
+              }else{
+                statement.setString(1, (String) values);
+              }
+           
+              try (ResultSet result = statement.executeQuery()) {
+                  while (result.next()) {
+                      Object[] carData = new Object[6];
+                        carData[0] = result.getString("CAR_NAME");
+                        carData[1] = result.getInt("NO_OF_SEATS");
+                        carData[2] = result.getDouble("RENT_PRICE");
+                        carData[3] = result.getBoolean("AVAILABILITY");
 
-                temp.add(carData);
-            }
+                        Blob imageBlob = result.getBlob("CAR_IMAGE");
+                        carData[4] = imageBlob.getBytes(1, (int) imageBlob.length());
+                        carData[5] = result.getInt("CAR_ID"); 
+                        
+                    temp.add(carData);
+                  }
+              }
+          } catch (SQLException e) {
+              e.printStackTrace();
+          }
 
-            return temp;
+          return temp;
+    }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-      return null;
-   }
     
-  private void renderCars() {
-    ArrayList<Object[]> cars = getCars();
-    clearPanel();
-    
-    for (Object[] carData : cars) {
-        JPanel prodPanel = new JPanel();
-        prodPanel.setSize(181, 248);
-        
-        byte[] imageData = (byte[]) carData[4];
-        ImageIcon imageIcon = new ImageIcon(imageData);
-        
-        if((boolean) carData[3]){
-           prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1]));
-           mainPanel.add(prodPanel);  
-        }
-      }
+    private void renderCars() {
+       ArrayList<Object[]> cars = getCars("SELECT * FROM CARS WHERE AVAILABILITY = ?", true);
+       renderData(cars);
     }
     
     @SuppressWarnings("unchecked")
@@ -125,64 +117,38 @@ public class ClientCarPanel extends TabbedForm {
         if(search_bar_txt.getText().trim().isEmpty()){
             renderCars();
         }else{
-           renderSearchedData(filterSearch(search_bar_txt.getText()));
+           filterSearch(search_bar_txt.getText());
         }
     }//GEN-LAST:event_search_bar_txtKeyTyped
 
     private void search_bar_txtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search_bar_txtFocusGained
-        // TODO add your handling code here:
         search_bar_txt.setText("");
     }//GEN-LAST:event_search_bar_txtFocusGained
 
-    private ArrayList<Object[]> filterSearch(String str){
-        ArrayList<Object[]> temp = new ArrayList<>();
-        String sqlQuery = "SELECT * FROM cars WHERE car_name LIKE ?";
-  
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery)) {
-             String searchQuery = "%" + str.trim() + "%" ;
-
-             statement.setString(1, searchQuery);
-            
-            try(ResultSet result = statement.executeQuery()) {
-                while(result.next()){
-                  Object[] carData = new Object[5]; 
-                  carData[0] = result.getString("CAR_NAME");
-                  carData[1] = result.getInt("NO_OF_SEATS");
-                  carData[2] = result.getDouble("RENT_PRICE");
-                  carData[3] = result.getBoolean("AVAILABILITY");
-                  Blob imageBlob = result.getBlob("CAR_IMAGE");
-                  carData[4] = imageBlob.getBytes(1, (int) imageBlob.length());
-                   
-                  temp.add(carData);
-                }
-              return temp;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    private void filterSearch(String str) {
+      String sqlQuery = "SELECT * FROM cars WHERE car_name LIKE ?";
+      ArrayList<Object[]> searchedCars = getCars(sqlQuery, "%" + str.trim() + "%");
+      renderData(searchedCars);
     }
-    
-    private void renderSearchedData(ArrayList<Object[]> data){
-        ArrayList<Object[]> cars = data;
-        clearPanel();
-        
-        for (Object[] carData : cars) {
-            JPanel prodPanel = new JPanel();
-            prodPanel.setSize(181, 248);
 
-            byte[] imageData = (byte[]) carData[4];
-            ImageIcon imageIcon = new ImageIcon(imageData);
+    private void renderData(ArrayList<Object[]> data) {
+     clearPanel();
 
-            if((boolean) carData[3]){
-               prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1]));
-               mainPanel.add(prodPanel);  
-            }
+     for (Object[] carData : data) {
+         JPanel prodPanel = new JPanel();
+         prodPanel.setSize(181, 248);
+         
+        byte[] imageData = (byte[]) carData[4];
+        ImageIcon imageIcon = new ImageIcon(imageData);
+         
+      
+       if((boolean) carData[3]){
+         prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], (int) carData[1], (int) carData[5]));
+         mainPanel.add(prodPanel);
         }
+      }
     }
-    
+     
     private void clearPanel() {
         mainPanel.removeAll();
         mainPanel.revalidate();
