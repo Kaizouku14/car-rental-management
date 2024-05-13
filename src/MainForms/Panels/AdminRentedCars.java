@@ -1,8 +1,16 @@
 package MainForms.Panels;
 
+import Components.chart.models.ModelChart;
+import Components.chart.models.ModelData;
+import Components.chart.models.TransactionModel;
 import Components.tabbed.TabbedForm;
 import Service.Database;
+import java.awt.Color;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -18,8 +26,12 @@ public class AdminRentedCars extends TabbedForm{
     public AdminRentedCars() {
         db = new Database();
         initComponents();
-        renderDataToTable();
+        transaction_chart.setTitle("Transaction Per Month");
+        transaction_chart.addLegend("Costumers", Color.decode("#0099F7"), Color.decode("#F11712"));
+        transaction_chart.addLegend("Rented Cars", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        renderDataToTable("SELECT * FROM TRANSACTION", "");
         registerTableRowSelectionListener();
+        setData();
     }
 
     @SuppressWarnings("unchecked")
@@ -29,6 +41,8 @@ public class AdminRentedCars extends TabbedForm{
         jScrollPane1 = new javax.swing.JScrollPane();
         transaction_table = new javax.swing.JTable();
         search_bar_txt = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        transaction_chart = new Components.chart.CurveLineChart();
 
         transaction_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -62,15 +76,29 @@ public class AdminRentedCars extends TabbedForm{
             }
         });
 
+        transaction_chart.setForeground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(transaction_chart, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(transaction_chart, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(search_bar_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 790, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -79,8 +107,10 @@ public class AdminRentedCars extends TabbedForm{
                 .addGap(27, 27, 27)
                 .addComponent(search_bar_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(226, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -91,61 +121,52 @@ public class AdminRentedCars extends TabbedForm{
 
     private void search_bar_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_bar_txtKeyTyped
         // TODO add your handling code here:
-        if(search_bar_txt.getText().trim().isEmpty()){
-            renderDataToTable();
-        }else{
-           filterSearch(search_bar_txt.getText());
+     String searchText = search_bar_txt.getText().trim();
+        if(searchText.isEmpty()){
+            renderDataToTable("SELECT * FROM TRANSACTION", "");
+        } else {
+            filterSearch("SELECT * FROM transaction WHERE client_name LIKE ?", searchText);
         }
     }//GEN-LAST:event_search_bar_txtKeyTyped
 
-    private void renderDataToTable() {
-       String sqlQuery = "SELECT * FROM TRANSACTION";
+    private void renderDataToTable(String sqlQuery, String searchParam) {
+      populateTable(sqlQuery, searchParam);
+    }
 
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery);
-             ResultSet result = statement.executeQuery()) {
+   private void filterSearch(String sqlQuery, String searchParam) {
+        populateTable(sqlQuery, "%" + searchParam + "%");
+    }
 
-             populateTable(result);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-   }
-     
-    private void filterSearch(String str) {
-       String sqlQuery = "SELECT * FROM transaction WHERE client_name LIKE ?";
+    private void populateTable(String sqlQuery, String searchParam){
+        DefaultTableModel model = (DefaultTableModel) transaction_table.getModel();
+        model.setRowCount(0);
 
         try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = con.prepareStatement(sqlQuery)) {
-             String searchQuery = "%" + str.trim() + "%";
-             statement.setString(1, searchQuery);
+
+            if(!searchParam.isEmpty()){
+                statement.setString(1, searchParam);
+            }
 
             try (ResultSet result = statement.executeQuery()) {
-                populateTable(result);
+                 while (result.next()) {
+                    if(result.getBoolean("STATUS")){
+                       Object[] row = {
+                                        result.getInt("TRANSACTION_ID"),
+                                        result.getString("CLIENT_NAME"),
+                                        result.getString("CLIENT_PHONENUM"),
+                                        result.getInt("CAR_ID"),
+                                        result.getString("CAR_TO_RENT"),
+                                        result.getDate("RENT_START"),
+                                        result.getInt("NO_OF_DAYS"),
+                                        result.getDouble("AMOUNT_TO_PAY")
+                                      };
+                      model.addRow(row);
+                 }
+               }          
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-     
-    private void populateTable(ResultSet result) throws SQLException {
-        DefaultTableModel model = (DefaultTableModel) transaction_table.getModel();
-        model.setRowCount(0);
-    
-        while (result.next()) {
-            if(result.getBoolean("STATUS")){
-               Object[] row = {
-                                result.getInt("TRANSACTION_ID"),
-                                result.getString("CLIENT_NAME"),
-                                result.getString("CLIENT_PHONENUM"),
-                                result.getInt("CAR_ID"),
-                                result.getString("CAR_TO_RENT"),
-                                result.getDate("RENT_START"),
-                                result.getInt("NO_OF_DAYS"),
-                                result.getDouble("AMOUNT_TO_PAY")
-                              };
-              model.addRow(row);
-            }
         }
     }
     
@@ -174,7 +195,7 @@ public class AdminRentedCars extends TabbedForm{
            updateCarAvailability(car_id);
            updateTransactionStatus(transaction_id);
            
-           renderDataToTable();
+           renderDataToTable("SELECT * FROM TRANSACTION", "");
         }
     }
         
@@ -199,9 +220,46 @@ public class AdminRentedCars extends TabbedForm{
        } 
     } 
     
+      public void setData() {
+        List<TransactionModel> lists = new ArrayList<>();
+
+        String sql = "SELECT rent_start, " +
+             "COUNT(*) AS transaction_id, " +
+             "COUNT(DISTINCT car_to_rent) AS total_cars_borrowed " +
+             "FROM transaction " +
+             "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
+             "ORDER BY rent_start ASC LIMIT 7";
+
+
+        try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            
+            while (resultSet.next()) {
+                LocalDate date = resultSet.getDate("rent_start").toLocalDate();
+                double total_of_costumers = resultSet.getDouble("transaction_id");
+                double total_cars_borrowed = resultSet.getDouble("total_cars_borrowed");
+        
+                String monthName = date.format(DateTimeFormatter.ofPattern("MMMM"));
+                lists.add(new TransactionModel(monthName,total_of_costumers,total_cars_borrowed ));
+            }
+
+            for (TransactionModel d : lists) {
+                transaction_chart.addData(new ModelChart(d.getMonth(), new double[] {d.getTotal_of_costumers(), d.getTotal_cars_borrowed()}));
+            }
+
+            transaction_chart.start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField search_bar_txt;
+    private Components.chart.CurveLineChart transaction_chart;
     private javax.swing.JTable transaction_table;
     // End of variables declaration//GEN-END:variables
 }

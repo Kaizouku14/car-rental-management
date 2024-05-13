@@ -38,9 +38,8 @@ public class AdminForm extends javax.swing.JFrame {
         initComponents();
         WindowsTabbed.getInstance().install(this, body);
         
-        chart.setTitle("Transaction Per Month");
+        chart.setTitle("Profit Per Month");
         chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
-        chart.addLegend("Borrowed Cars", Color.decode("#7b4397"), Color.decode("#dc2430"));
         
         db = new Database();
         setData();
@@ -232,8 +231,7 @@ public class AdminForm extends javax.swing.JFrame {
         List<ModelData> lists = new ArrayList<>();
 
         String sql = "SELECT rent_start, " +
-                    "SUM(amount_to_pay) AS total_amount, " +
-                    "COUNT(DISTINCT car_to_rent) AS car_count " +
+                    "SUM(amount_to_pay) AS total_amount " +
                     "FROM transaction " +
                     "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
                     "ORDER BY rent_start ASC LIMIT 7";
@@ -241,18 +239,17 @@ public class AdminForm extends javax.swing.JFrame {
         try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
-
+            
             while (resultSet.next()) {
                 LocalDate date = resultSet.getDate("rent_start").toLocalDate();
                 double amount = resultSet.getDouble("total_amount");
-                int no_of_cars = resultSet.getInt("car_count");
-
+        
                 String monthName = date.format(DateTimeFormatter.ofPattern("MMMM"));
-                lists.add(new ModelData(monthName, amount, no_of_cars));
+                lists.add(new ModelData(monthName,amount));
             }
 
             for (ModelData d : lists) {
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getProfit() , d.getNoOfCars()}));
+                chart.addData(new ModelChart(d.getMonth(), new double[] {d.getValue()}));
             }
 
             chart.start();

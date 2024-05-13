@@ -61,11 +61,6 @@ public class ClientCarPanel extends TabbedForm {
           return temp;
     }
 
-    public void renderCars() {
-       ArrayList<Object[]> cars = getCars("SELECT * FROM CARS WHERE AVAILABILITY = ?", true);
-       renderData(cars);
-    }
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -123,6 +118,11 @@ public class ClientCarPanel extends TabbedForm {
         search_bar_txt.setText("");
     }//GEN-LAST:event_search_bar_txtFocusGained
 
+    public void renderCars() {
+       ArrayList<Object[]> cars = getCars("SELECT * FROM CARS WHERE AVAILABILITY = ?", true);
+       renderData(cars);
+    }
+    
     private void filterSearch(String str) {
       String sqlQuery = "SELECT * FROM cars WHERE car_name LIKE ?";
       ArrayList<Object[]> searchedCars = getCars(sqlQuery, "%" + str.trim() + "%");
