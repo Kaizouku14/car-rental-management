@@ -2,14 +2,13 @@ package MainForms.Panels;
 
 import Components.tabbed.TabbedForm;
 import Service.Database;
+import Utils.EventListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.sql.*;
 import javax.swing.*;
 
-//TODO : rent receipt
-
-public class ClientCarPanel extends TabbedForm {
+public class ClientCarPanel extends TabbedForm implements EventListener {
 
     private Database db;
     private JPanel mainPanel;
@@ -25,6 +24,16 @@ public class ClientCarPanel extends TabbedForm {
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setPreferredSize(new Dimension(830, 400));
         jPanel1.add(scrollPane); 
+    }
+    
+       @Override
+    public void onEventListenerClicked(String carInfo) {
+         if(carInfo.trim().isEmpty()){
+            JOptionPane.showMessageDialog(this,"transaction failed!");
+        }else{             
+           JOptionPane.showMessageDialog(this, "Proceed to Pagzone Car store");
+           renderCars();
+        }
     }
 
     private ArrayList<Object[]> getCars(String sqlQuery, Object values) {
@@ -132,16 +141,18 @@ public class ClientCarPanel extends TabbedForm {
     private void renderData(ArrayList<Object[]> data) {
      clearPanel();
 
+ 
      for (Object[] carData : data) {
          JPanel prodPanel = new JPanel();
          prodPanel.setSize(181, 248);
          
         byte[] imageData = (byte[]) carData[4];
         ImageIcon imageIcon = new ImageIcon(imageData);
-         
+       
        if((boolean) carData[3]){
+          EventListener listener = this;
          prodPanel.add(new ProdPanel(imageIcon, (String) carData[0], (double) carData[2], 
-                                    (int) carData[1], (int) carData[5], (boolean) carData[3]));
+                                    (int) carData[1], (int) carData[5], (boolean) carData[3], listener));
          mainPanel.add(prodPanel);
         }
       }
@@ -157,5 +168,6 @@ public class ClientCarPanel extends TabbedForm {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField search_bar_txt;
     // End of variables declaration//GEN-END:variables
+
 
 }

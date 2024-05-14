@@ -12,19 +12,22 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import Utils.EventListener;
 
-public class ManageCarDialog extends javax.swing.JDialog{
-    
+public class ManageCarDialog extends javax.swing.JDialog {
+        
+    private EventListener listener; 
     private Database db;
     private int id;
     private String path;
 
     public ManageCarDialog(java.awt.Frame parent, boolean modal, int car_id ,String car_name ,int no_of_seats ,
-            double rent_price ,String availability) {
+            double rent_price ,String availability , EventListener listener) {
         super(parent, modal);
         initComponents();
         
        db = new Database();
+       this.listener = listener;
        if(availability.equals("available")){
            available_cb.setSelected(true);
        }
@@ -204,6 +207,7 @@ public class ManageCarDialog extends javax.swing.JDialog{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
     private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
         // TODO add your handling code here:
        browseImage();
@@ -216,13 +220,13 @@ public class ManageCarDialog extends javax.swing.JDialog{
                JOptionPane.QUESTION_MESSAGE);
       
         if(result ==  JOptionPane.YES_NO_OPTION){       
-          JOptionPane.showMessageDialog(this,"Edit enabled");
-          car_name_txt.setEnabled(true);
-          No_of_seats_txt.setEnabled(true);
-          rent_price_txt.setEnabled(true);
-          available_cb.setEnabled(true);
-          uploadImage.setEnabled(true);
-          update_button.setEnabled(true);
+            JOptionPane.showMessageDialog(this,"Edit enabled");
+            car_name_txt.setEnabled(true);
+            No_of_seats_txt.setEnabled(true);
+            rent_price_txt.setEnabled(true);
+            available_cb.setEnabled(true);
+            uploadImage.setEnabled(true);
+            update_button.setEnabled(true);
         }
     }//GEN-LAST:event_edit_buttonActionPerformed
 
@@ -241,10 +245,11 @@ public class ManageCarDialog extends javax.swing.JDialog{
                statement.setInt(6, id);
                
                if(statement.executeUpdate() > 0 ){
-                   JOptionPane.showMessageDialog(this,"Car rejuvenated Successfully!");
-      
-               }
-               
+                   if (listener != null) {
+                     listener.onEventListenerClicked("Car Info Example");
+                    }
+                 dispose();
+               }   
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (FileNotFoundException ex) {

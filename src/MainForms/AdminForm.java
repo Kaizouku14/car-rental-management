@@ -286,4 +286,6 @@ public class AdminForm extends javax.swing.JFrame {
     private javax.swing.JPanel totalCars_panel;
     private javax.swing.JLabel totalOfCars_lbl;
     // End of variables declaration//GEN-END:variables
+
+  
 }

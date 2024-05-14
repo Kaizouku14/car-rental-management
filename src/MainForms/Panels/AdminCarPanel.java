@@ -15,16 +15,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import Utils.EventListener;
 
 
 //TODO : r-render after transaction complete
 
-public class AdminCarPanel extends TabbedForm {
+public class AdminCarPanel extends TabbedForm implements EventListener{
     
     private String car_name, path2;
     private int no_of_seats;
@@ -199,6 +201,16 @@ public class AdminCarPanel extends TabbedForm {
                 .addGap(87, 87, 87))
         );
     }// </editor-fold>//GEN-END:initComponents
+  
+    @Override
+    public void onEventListenerClicked(String carInfo) {
+        if(carInfo.trim().isEmpty()){
+            JOptionPane.showMessageDialog(this,"Car rejuvenated Failed!");
+        }else{
+          JOptionPane.showMessageDialog(this,"Car rejuvenated Successfully!");
+          renderDataToTable();  
+        }
+    }
 
     private void add_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_btnActionPerformed
         // TODO add your handling code here:
@@ -305,6 +317,21 @@ public class AdminCarPanel extends TabbedForm {
                 model.addRow(row);
              }
              
+              if(result.getBoolean("STATUS")){
+               Object[] row = {
+                                result.getInt("TRANSACTION_ID"),
+                                result.getString("CLIENT_NAME"),
+                                result.getString("CLIENT_PHONENUM"),
+                                result.getInt("CAR_ID"),
+                                result.getString("CAR_TO_RENT"),
+                                result.getDate("RENT_START"),
+                                result.getInt("NO_OF_DAYS"),
+                                result.getDouble("AMOUNT_TO_PAY")
+                              };
+              model.addRow(row);
+            }
+             
+             
         }catch(SQLException e) {
             e.printStackTrace();
         }  
@@ -313,6 +340,7 @@ public class AdminCarPanel extends TabbedForm {
     
      private void registerTableRowSelectionListener() {
         ListSelectionModel selectionModel = car_table.getSelectionModel();
+        EventListener listener = this;
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
@@ -325,7 +353,8 @@ public class AdminCarPanel extends TabbedForm {
                         data[i] = car_table.getValueAt(selectedRow, i);
                     }
                         
-                    new ManageCarDialog(parentFrame ,true ,(int) data[0] ,(String) data[1] ,(int) data[2] ,(double) data[3] ,(String) data[4])
+                    new ManageCarDialog(parentFrame ,true ,(int) data[0] ,(String) data[1] ,(int) data[2] ,
+                            (double) data[3] ,(String) data[4] , listener)
                                 .setVisible(true);
                  }
                }
@@ -347,4 +376,7 @@ public class AdminCarPanel extends TabbedForm {
     private javax.swing.JTextField rent_price_txt;
     private javax.swing.JButton uploadImage;
     // End of variables declaration//GEN-END:variables
+
+
+ 
 }

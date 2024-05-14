@@ -2,6 +2,7 @@ package MainForms.Dialogs;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 import Service.Database;
+import Utils.EventListener;
 import Utils.Utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,13 +18,15 @@ public class TransactionDialog extends javax.swing.JDialog {
      private Database db;
      private int car_id;
      private boolean availability;
+     private EventListener listener;
   
     public TransactionDialog(java.awt.Frame parent, boolean modal, 
         ImageIcon image,String car_name , int no_of_seats, double price_txt,
-        int car_id, boolean availability ) {
+        int car_id, boolean availability, EventListener listener ) {
         super(parent, modal);
         initComponents();
         
+        this.listener = listener;
         util = new Utils();
         db = new Database();
         photoHolder_lbl.setIcon(image);
@@ -186,7 +189,7 @@ public class TransactionDialog extends javax.swing.JDialog {
              
             if(insertTransaction(no_of_days , total_amount, client_name , phone_number, car_name, car_id ,availability )){
                rentCar(car_id);
-               JOptionPane.showMessageDialog(this, "Proceed to Pagzone Car store");
+               listener.onEventListenerClicked("Success");
                dispose();
             }
          }

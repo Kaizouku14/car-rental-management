@@ -1,6 +1,7 @@
 package MainForms.Panels;
 
 import MainForms.Dialogs.TransactionDialog;
+import Utils.EventListener;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -11,10 +12,13 @@ public class ProdPanel extends javax.swing.JPanel {
     private int no_of_seats , car_id;
     private ImageIcon image2;
     private boolean availability;
+    private EventListener listener;
 
-    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats, int car_id, boolean availability) {
-        initComponents();
+    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats, int car_id, boolean availability,
+                     EventListener listener) {
+       initComponents();
         
+       this.listener = listener;
        Image scaledImage = image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
        image = new ImageIcon(scaledImage);
        image2 = new ImageIcon(scaledImage);
@@ -108,7 +112,7 @@ public class ProdPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         new TransactionDialog(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,
-                              Double.parseDouble(price_txt.getText()), car_id, availability)
+                              Double.parseDouble(price_txt.getText()), car_id, availability , listener)
                            .setVisible(true);
     }//GEN-LAST:event_rent_btnActionPerformed
 
