@@ -1,17 +1,15 @@
 package MainForms.Dialogs;
 
-import MainForms.Dialogs.ReceiptDialog;
+import static javax.swing.JOptionPane.showMessageDialog;
 import Service.Database;
 import Utils.Utils;
-import java.awt.Frame;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import javax.swing.ImageIcon;
-import static javax.swing.JOptionPane.showMessageDialog;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 
 public class TransactionDialog extends javax.swing.JDialog {
     
@@ -171,6 +169,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
@@ -187,8 +186,8 @@ public class TransactionDialog extends javax.swing.JDialog {
              
             if(insertTransaction(no_of_days , total_amount, client_name , phone_number, car_name, car_id ,availability )){
                rentCar(car_id);
-               Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-               new ReceiptDialog(parentFrame, true).setVisible(true);   
+               JOptionPane.showMessageDialog(this, "Proceed to Pagzone Car store");
+               dispose();
             }
          }
     }//GEN-LAST:event_rent_btnActionPerformed
@@ -230,7 +229,6 @@ public class TransactionDialog extends javax.swing.JDialog {
           
            statement.setBoolean(1, false);
            statement.setInt(2,car_id);
-           
            statement.executeUpdate();
            
        }catch(SQLException e){

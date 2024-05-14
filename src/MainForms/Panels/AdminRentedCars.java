@@ -1,7 +1,6 @@
 package MainForms.Panels;
 
 import Components.chart.models.ModelChart;
-import Components.chart.models.ModelData;
 import Components.chart.models.TransactionModel;
 import Components.tabbed.TabbedForm;
 import Service.Database;
@@ -194,7 +193,6 @@ public class AdminRentedCars extends TabbedForm{
         if(result ==  JOptionPane.YES_NO_OPTION){
            updateCarAvailability(car_id);
            updateTransactionStatus(transaction_id);
-           
            renderDataToTable("SELECT * FROM TRANSACTION", "");
         }
     }
