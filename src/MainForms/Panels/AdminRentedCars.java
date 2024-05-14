@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 //Car status `rented or returned`
 
-public class AdminRentedCars extends TabbedForm{
+public class AdminRentedCars extends TabbedForm {
 
     private Database db;
     
@@ -154,7 +154,7 @@ public class AdminRentedCars extends TabbedForm{
                                         result.getInt("TRANSACTION_ID"),
                                         result.getString("CLIENT_NAME"),
                                         result.getString("CLIENT_PHONENUM"),
-                                        result.getInt("CAR_ID"),
+                                        result.getInt("PLATE_NO"),
                                         result.getString("CAR_TO_RENT"),
                                         result.getDate("RENT_START"),
                                         result.getInt("NO_OF_DAYS"),

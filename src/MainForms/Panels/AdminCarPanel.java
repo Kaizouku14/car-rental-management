@@ -207,7 +207,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
         if(carInfo.trim().isEmpty()){
             JOptionPane.showMessageDialog(this,"Car rejuvenated Failed!");
         }else{
-          JOptionPane.showMessageDialog(this,"Car rejuvenated Successfully!");
           renderDataToTable();  
         }
     }
@@ -315,23 +314,8 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                                 result.getDouble("RENT_PRICE"), rent_status};
              
                 model.addRow(row);
-             }
              
-              if(result.getBoolean("STATUS")){
-               Object[] row = {
-                                result.getInt("TRANSACTION_ID"),
-                                result.getString("CLIENT_NAME"),
-                                result.getString("CLIENT_PHONENUM"),
-                                result.getInt("CAR_ID"),
-                                result.getString("CAR_TO_RENT"),
-                                result.getDate("RENT_START"),
-                                result.getInt("NO_OF_DAYS"),
-                                result.getDouble("AMOUNT_TO_PAY")
-                              };
-              model.addRow(row);
             }
-             
-             
         }catch(SQLException e) {
             e.printStackTrace();
         }  

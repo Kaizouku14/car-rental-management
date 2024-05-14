@@ -18,7 +18,6 @@ public class ProdPanel extends javax.swing.JPanel {
                      EventListener listener) {
        initComponents();
         
-       this.listener = listener;
        Image scaledImage = image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
        image = new ImageIcon(scaledImage);
        image2 = new ImageIcon(scaledImage);
@@ -29,6 +28,7 @@ public class ProdPanel extends javax.swing.JPanel {
        this.no_of_seats = no_of_seats;
        this.car_id = car_id;
        this.availability = availability;
+       this.listener = listener;
     }
 
     @SuppressWarnings("unchecked")
@@ -113,7 +113,7 @@ public class ProdPanel extends javax.swing.JPanel {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         new TransactionDialog(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,
                               Double.parseDouble(price_txt.getText()), car_id, availability , listener)
-                           .setVisible(true);
+                              .setVisible(true);
     }//GEN-LAST:event_rent_btnActionPerformed
 
 

@@ -14,6 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import Utils.EventListener;
 
+//TODO : refresh car table
+
 public class ManageCarDialog extends javax.swing.JDialog {
         
     private EventListener listener; 
@@ -230,33 +232,57 @@ public class ManageCarDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_edit_buttonActionPerformed
 
-    private void rejuvenateVehicle(int id ,String car_name ,int no_of_seats ,double rent_price, boolean availability,String path){
-           String sqlQuery = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ?, CAR_IMAGE = ? WHERE CAR_ID = ?";
-           
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery)) {
+    // Improved Method to Update Vehicle Information
+  private void rejuvenateVehicle(int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
+    String sqlQueryWithImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ?, CAR_IMAGE = ? WHERE CAR_ID = ?";
+    String sqlQueryWithoutImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ? WHERE CAR_ID = ?";
 
-               InputStream is = new FileInputStream(new File(path));       
-               statement.setString(1, car_name);
-               statement.setInt(2, no_of_seats);
-               statement.setDouble(3, rent_price);
-               statement.setBoolean(4, availability);
-               statement.setBlob(5, is);
-               statement.setInt(6, id);
-               
-               if(statement.executeUpdate() > 0 ){
-                   if (listener != null) {
-                     listener.onEventListenerClicked("Car Info Example");
-                    }
-                 dispose();
-               }   
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         
+    if (path == null) {
+        updateVehicleInfo(sqlQueryWithoutImage, id, car_name, no_of_seats, rent_price, availability, null);
+    } else {
+        updateVehicleInfo(sqlQueryWithImage, id, car_name, no_of_seats, rent_price, availability, path);
     }
+ }
+
+    // Unified Method to Handle Both Scenarios
+   private void updateVehicleInfo(String sqlQuery, int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
+    try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+         PreparedStatement statement = con.prepareStatement(sqlQuery)) {
+
+        // Set common parameters
+        statement.setString(1, car_name);
+        statement.setInt(2, no_of_seats);
+        statement.setDouble(3, rent_price);
+        statement.setBoolean(4, availability);
+
+        // Set the image parameter if path is provided
+        if (path != null) {
+            try (InputStream is = new FileInputStream(new File(path))) {
+                statement.setBlob(5, is);
+                statement.setInt(6, id);
+            } catch (FileNotFoundException e) {
+                Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, "File not found: " + path, e);
+                return;
+            }
+        } else {
+            statement.setInt(5, id);
+        }
+
+        // Execute the update and handle the result
+        if (statement.executeUpdate() > 0) {
+            if (listener != null) {
+                listener.onEventListenerClicked("Car Info Example");
+                JOptionPane.showMessageDialog(this, "Car rejuvenated successfully!");
+            }
+            dispose();
+        } else {
+            Logger.getLogger(ManageCarDialog.class.getName()).log(Level.WARNING, "No rows affected. Car ID: " + id);
+        }
+       } catch (SQLException e) {
+        Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, "Database error during update.", e);
+    }
+  }
+
     
     private void delete_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_buttonActionPerformed
         // TODO add your handling code here:
@@ -277,17 +303,21 @@ public class ManageCarDialog extends javax.swing.JDialog {
        
        if(result == JOptionPane.YES_NO_OPTION){
            
-          String car_name = car_name_txt.getText();
-          int no_of_seats = Integer.parseInt(No_of_seats_txt.getText());
-          double rent_price = Double.parseDouble(rent_price_txt.getText());
-          boolean availability = available_cb.isSelected();
-          String path = this.path;
-           
-          rejuvenateVehicle(id ,car_name ,no_of_seats ,rent_price ,availability , path);
+           try {
+               String car_name = car_name_txt.getText();
+               int no_of_seats = Integer.parseInt(No_of_seats_txt.getText());
+               double rent_price = Double.parseDouble(rent_price_txt.getText());
+               boolean availability = available_cb.isSelected();
+               String path = this.path;
+               
+               rejuvenateVehicle(id ,car_name ,no_of_seats ,rent_price ,availability , path);
+           } catch (IOException ex) {
+               Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, null, ex);
+           }
        }
     }//GEN-LAST:event_update_buttonActionPerformed
     
-    
+
     public void browseImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -322,11 +352,10 @@ public class ManageCarDialog extends javax.swing.JDialog {
                     byte[] imageData = car_image.getBytes(1, (int) car_image.length());
                     ImageIcon imageIcon = new ImageIcon(imageData);
 
-                    // Scale the image
                     Image image = imageIcon.getImage().getScaledInstance(150, 172, Image.SCALE_SMOOTH);
                     ImageIcon scaledImageIcon = new ImageIcon(image);
 
-                    photoHolder_lbl.setIcon(scaledImageIcon);
+                    photoHolder_lbl.setIcon(scaledImageIcon); 
                 }
             }
         } catch (SQLException e) {
@@ -345,14 +374,18 @@ public class ManageCarDialog extends javax.swing.JDialog {
             int rowsAffected = statement.executeUpdate();
             
             if(rowsAffected > 0){
-                JOptionPane.showMessageDialog(this,"Car successfully obliterated!");
+                 if (listener != null) {
+                     listener.onEventListenerClicked("Car Info Example");
+                     JOptionPane.showMessageDialog(this,"Car successfully obliterated!");
+                    }
+                 dispose();
             }
             
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+  
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CAR_ID;

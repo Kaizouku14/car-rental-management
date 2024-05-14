@@ -26,7 +26,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         
-        this.listener = listener;
+     
         util = new Utils();
         db = new Database();
         photoHolder_lbl.setIcon(image);
@@ -34,6 +34,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         no_of_seats_lbl.setText(String.valueOf(no_of_seats));
         price_lbl.setText(String.valueOf(price_txt));
         this.car_id = car_id;
+        this.listener = listener;
     }
                  
     @SuppressWarnings("unchecked")
@@ -200,7 +201,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         
           String sqlQuery = "INSERT INTO TRANSACTION (RENT_START, NO_OF_DAYS ,"
                     + " AMOUNT_TO_PAY , CLIENT_NAME , CLIENT_"
-                    + "PHONENUM , CAR_TO_RENT, CAR_ID, STATUS) VALUES (?,?,?,?,?,?,?,?)";
+                    + "PHONENUM , CAR_TO_RENT, PLATE_NO, STATUS) VALUES (?,?,?,?,?,?,?,?)";
           
             try(Connection con = DriverManager.getConnection(db.getUrl(), db.getUser() , db.getUser());
                 PreparedStatement statement = con.prepareStatement(sqlQuery)){
@@ -213,7 +214,7 @@ public class TransactionDialog extends javax.swing.JDialog {
                statement.setString(5, phone_number);
                statement.setString(6, car_name);
                statement.setInt(7, car_id);
-               statement.setBoolean(8,availability);   
+               statement.setBoolean(8,!availability);   
                
               return statement.executeUpdate() > 0;
                 

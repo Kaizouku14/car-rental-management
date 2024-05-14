@@ -140,7 +140,6 @@ public class ClientCarPanel extends TabbedForm implements EventListener {
 
     private void renderData(ArrayList<Object[]> data) {
      clearPanel();
-
  
      for (Object[] carData : data) {
          JPanel prodPanel = new JPanel();
