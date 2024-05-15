@@ -1,4 +1,4 @@
-package MainForms.Dialogs;
+package Main.Dialogs;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 import Service.Database;

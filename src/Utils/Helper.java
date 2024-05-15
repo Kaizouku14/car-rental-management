@@ -1,6 +1,6 @@
 package Utils;
 
-import MainForms.Panels.AdminCarPanel;
+import Main.Panels.AdminCarPanel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;

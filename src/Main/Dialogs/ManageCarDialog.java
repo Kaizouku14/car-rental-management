@@ -1,6 +1,6 @@
-package MainForms.Dialogs;
+package Main.Dialogs;
 
-import MainForms.Panels.AdminCarPanel;
+import Main.Panels.AdminCarPanel;
 import Service.Database;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -187,8 +187,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
                         .addGap(59, 59, 59)
                         .addComponent(photoHolder_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(uploadImage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(uploadImage)))
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(update_button, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)

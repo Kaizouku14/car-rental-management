@@ -1,6 +1,6 @@
-package MainForms.Panels;
+package Main.Panels;
 
-import MainForms.Dialogs.TransactionDialog;
+import Main.Dialogs.TransactionDialog;
 import Utils.EventListener;
 import java.awt.Image;
 import javax.swing.ImageIcon;

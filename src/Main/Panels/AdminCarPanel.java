@@ -1,7 +1,7 @@
-package MainForms.Panels;
+package Main.Panels;
 
 import Components.tabbed.TabbedForm;
-import MainForms.Dialogs.ManageCarDialog;
+import Main.Dialogs.ManageCarDialog;
 import Service.Database;
 import Utils.Helper; 
 import java.awt.Image;
@@ -17,9 +17,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import Utils.EventListener;
-
-
-//TODO : r-render after transaction complete
 
 public class AdminCarPanel extends TabbedForm implements EventListener{
     

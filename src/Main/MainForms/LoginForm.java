@@ -1,4 +1,4 @@
-package MainForms;
+package Main.MainForms;
 
 import Service.Authentication;
 import java.awt.event.ActionListener;
@@ -24,7 +24,6 @@ public class LoginForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton2 = new javax.swing.JButton();
         loginPanel = new javax.swing.JPanel();
         login_button = new javax.swing.JButton();
         register_type = new javax.swing.JLabel();
@@ -34,10 +33,6 @@ public class LoginForm extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         signin = new javax.swing.JButton();
         exit_button = new javax.swing.JButton();
-
-        jButton2.setBackground(new java.awt.Color(255, 255, 255));
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MainForms/icons8-x-24.png"))); // NOI18N
 
         setPreferredSize(new java.awt.Dimension(312, 374));
 
@@ -90,7 +85,7 @@ public class LoginForm extends javax.swing.JPanel {
 
         exit_button.setBackground(new java.awt.Color(255, 255, 255));
         exit_button.setForeground(new java.awt.Color(255, 255, 255));
-        exit_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MainForms/icons8-x-24.png"))); // NOI18N
+        exit_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-x-24.png"))); // NOI18N
         exit_button.setBorder(null);
         exit_button.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         exit_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -199,7 +194,6 @@ public class LoginForm extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Components.textfields.TextField email_txt;
     private javax.swing.JButton exit_button;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel loginPanel;

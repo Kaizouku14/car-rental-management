@@ -1,4 +1,4 @@
-package MainForms;
+package Main.MainForms;
 
 import Components.chart.models.ModelData;
 import Components.chart.models.ModelChart;

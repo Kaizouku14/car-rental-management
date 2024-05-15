@@ -1,4 +1,4 @@
-package MainForms;
+package Main.MainForms;
 
 
 import Utils.*;
@@ -6,7 +6,7 @@ import Components.drawer.ClientDrawerBuilder;
 import raven.drawer.Drawer;
 import raven.popup.GlassPanePopup;
 import Components.tabbed.WindowsTabbed;
-import MainForms.Panels.ClientCarPanel;
+import Main.Panels.ClientCarPanel;
 
 public class ClientForm extends javax.swing.JFrame {
     

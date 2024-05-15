@@ -1,8 +1,8 @@
 package Components.drawer;
 
 import Utils.CurrentFormHolder;
-import MainForms.Main;
-import MainForms.Panels.ClientCarPanel;
+import Main.MainForms.Main;
+import Main.Panels.ClientCarPanel;
 import raven.drawer.Drawer;
 import raven.drawer.component.SimpleDrawerBuilder;
 import raven.drawer.component.footer.SimpleFooterData;

@@ -1,4 +1,4 @@
-package MainForms.Panels;
+package Main.Panels;
 
 import Components.chart.models.ModelChart;
 import Components.chart.models.TransactionModel;

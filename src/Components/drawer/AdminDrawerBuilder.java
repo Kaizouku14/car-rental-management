@@ -1,7 +1,9 @@
 package Components.drawer;
 
+import Main.Panels.AdminRentedCars;
+import Main.Panels.AdminCarPanel;
 import Utils.CurrentFormHolder;
-import MainForms.Main;
+import Main.MainForms.Main;
 import raven.drawer.Drawer;
 import raven.drawer.component.SimpleDrawerBuilder;
 import raven.drawer.component.footer.SimpleFooterData;
@@ -10,7 +12,6 @@ import raven.drawer.component.header.SimpleHeaderData;
 import raven.drawer.component.menu.*;
 import raven.swing.AvatarIcon;
 import Components.tabbed.WindowsTabbed;
-import MainForms.Panels.*;
 
 public class AdminDrawerBuilder extends SimpleDrawerBuilder{
     

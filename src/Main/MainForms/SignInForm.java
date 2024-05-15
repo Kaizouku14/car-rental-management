@@ -1,4 +1,4 @@
-package MainForms;
+package Main.MainForms;
 
 import Service.*;
 import Utils.*;
@@ -97,7 +97,7 @@ public class SignInForm extends javax.swing.JPanel {
         username_txt.setLabelText("USERNAME");
 
         exit_button.setBackground(new java.awt.Color(255, 255, 255));
-        exit_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MainForms/icons8-x-24.png"))); // NOI18N
+        exit_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-x-24.png"))); // NOI18N
         exit_button.setBorder(null);
         exit_button.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         exit_button.addActionListener(new java.awt.event.ActionListener() {
@@ -130,7 +130,7 @@ public class SignInForm extends javax.swing.JPanel {
                             .addComponent(password_txt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(confirmpass_txt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(username_txt, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 33, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         signinPanelLayout.setVerticalGroup(

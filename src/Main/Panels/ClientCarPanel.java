@@ -1,4 +1,4 @@
-package MainForms.Panels;
+package Main.Panels;
 
 import Components.tabbed.TabbedForm;
 import Service.Database;
