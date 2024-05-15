@@ -13,8 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import Utils.EventListener;
-
-//TODO : refresh car table
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ManageCarDialog extends javax.swing.JDialog {
         
@@ -24,7 +23,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
     private String path;
 
     public ManageCarDialog(java.awt.Frame parent, boolean modal, int car_id ,String car_name ,int no_of_seats ,
-            double rent_price ,String availability , EventListener listener) {
+                           double rent_price ,String availability , EventListener listener) {
         super(parent, modal);
         initComponents();
         
@@ -209,12 +208,44 @@ public class ManageCarDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
         // TODO add your handling code here:
        browseImage();
     }//GEN-LAST:event_uploadImageActionPerformed
 
+    public void browseImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        // Set the file filter to accept PNG, JPEG, JPG, and WAV files
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "PNG, JPEG, JPG, and WAV files",
+                "png", "jpeg", "jpg", "wav");
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String path = selectedFile.getAbsolutePath();
+
+            try {
+                if (path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".jpg")) {
+                    BufferedImage bi = ImageIO.read(new File(path));
+                    Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);
+                    ImageIcon icon = new ImageIcon(image);
+                    photoHolder_lbl.setIcon(icon);
+
+                    this.path = path;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Selected file is not a supported image format.", "Invalid File", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     private void edit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_buttonActionPerformed
         // TODO add your handling code here:
          int result = JOptionPane.showConfirmDialog(this,"Are you sure you want to toggle edit?", "Edit",
@@ -231,58 +262,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
             update_button.setEnabled(true);
         }
     }//GEN-LAST:event_edit_buttonActionPerformed
-
-    // Improved Method to Update Vehicle Information
-  private void rejuvenateVehicle(int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
-    String sqlQueryWithImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ?, CAR_IMAGE = ? WHERE CAR_ID = ?";
-    String sqlQueryWithoutImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ? WHERE CAR_ID = ?";
-
-    if (path == null) {
-        updateVehicleInfo(sqlQueryWithoutImage, id, car_name, no_of_seats, rent_price, availability, null);
-    } else {
-        updateVehicleInfo(sqlQueryWithImage, id, car_name, no_of_seats, rent_price, availability, path);
-    }
- }
-
-    // Unified Method to Handle Both Scenarios
-   private void updateVehicleInfo(String sqlQuery, int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
-    try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-         PreparedStatement statement = con.prepareStatement(sqlQuery)) {
-
-        // Set common parameters
-        statement.setString(1, car_name);
-        statement.setInt(2, no_of_seats);
-        statement.setDouble(3, rent_price);
-        statement.setBoolean(4, availability);
-
-        // Set the image parameter if path is provided
-        if (path != null) {
-            try (InputStream is = new FileInputStream(new File(path))) {
-                statement.setBlob(5, is);
-                statement.setInt(6, id);
-            } catch (FileNotFoundException e) {
-                Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, "File not found: " + path, e);
-                return;
-            }
-        } else {
-            statement.setInt(5, id);
-        }
-
-        // Execute the update and handle the result
-        if (statement.executeUpdate() > 0) {
-            if (listener != null) {
-                listener.onEventListenerClicked("Car Info Example");
-                JOptionPane.showMessageDialog(this, "Car rejuvenated successfully!");
-            }
-            dispose();
-        } else {
-            Logger.getLogger(ManageCarDialog.class.getName()).log(Level.WARNING, "No rows affected. Car ID: " + id);
-        }
-       } catch (SQLException e) {
-        Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, "Database error during update.", e);
-    }
-  }
-
     
     private void delete_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_buttonActionPerformed
         // TODO add your handling code here:
@@ -291,10 +270,32 @@ public class ManageCarDialog extends javax.swing.JDialog {
                JOptionPane.QUESTION_MESSAGE);
        
        if(result == JOptionPane.YES_NO_OPTION){
-           obliterateVehicle(id);
+           removeVehicle(id);
        }
     }//GEN-LAST:event_delete_buttonActionPerformed
 
+    private void removeVehicle(int id){
+        String sqlQuery = "DELETE FROM CARS WHERE CAR_ID = ?";
+        
+        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+             PreparedStatement statement = con.prepareStatement(sqlQuery)) {
+
+            statement.setInt(1, id);
+            int rowsAffected = statement.executeUpdate();
+            
+            if(rowsAffected > 0){
+                 if (listener != null) {
+                     listener.onEventListenerClicked("Car Info Example");
+                     JOptionPane.showMessageDialog(this,"Car successfully removed!");
+                    }
+                 dispose();
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+  
     private void update_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_buttonActionPerformed
         // TODO add your handling code here:
        int result = JOptionPane.showConfirmDialog(this,"Are you sure you want to Update car information?", "Update",
@@ -310,34 +311,54 @@ public class ManageCarDialog extends javax.swing.JDialog {
                boolean availability = available_cb.isSelected();
                String path = this.path;
                
-               rejuvenateVehicle(id ,car_name ,no_of_seats ,rent_price ,availability , path);
+               updateVehicle(id ,car_name ,no_of_seats ,rent_price ,availability , path);
            } catch (IOException ex) {
                Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, null, ex);
            }
        }
     }//GEN-LAST:event_update_buttonActionPerformed
     
+   private void updateVehicle(int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {      
+      String sqlQueryWithImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ?, CAR_IMAGE = ? WHERE CAR_ID = ?";
+      String sqlQueryWithoutImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ? WHERE CAR_ID = ?";
 
-    public void browseImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int result = fileChooser.showOpenDialog(this);
-        
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String path = selectedFile.getAbsolutePath();
+      if (path == null) {
+            updateVehicleInfo(sqlQueryWithoutImage, id, car_name, no_of_seats, rent_price, availability, null);
+      } else {
+            updateVehicleInfo(sqlQueryWithImage, id, car_name, no_of_seats, rent_price, availability, path);
+      }
+   }
+
+   private void updateVehicleInfo(String sqlQuery, int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
+      try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
+           PreparedStatement statement = con.prepareStatement(sqlQuery)) {
+
+           InputStream is = new FileInputStream(new File(path));
+            statement.setString(1, car_name);
+            statement.setInt(2, no_of_seats);
+            statement.setDouble(3, rent_price);
+            statement.setBoolean(4, availability);
             
-            try {      
-                BufferedImage bi = ImageIO.read(new File(path));
-                Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);   
-                ImageIcon icon = new ImageIcon(image);
-                photoHolder_lbl.setIcon(icon); 
-                this.path = path;
-            } catch (IOException ex) {
-                Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (is != null) {
+            statement.setBlob(5, is);
+            statement.setInt(6, id);
+        } else {
+            statement.setNull(5, java.sql.Types.BLOB);
+            statement.setInt(5, id);
         }
-    } 
+        
+        if (statement.executeUpdate() > 0) {
+            if (listener != null) {
+                JOptionPane.showMessageDialog(this, "Car info updated successfully!");
+                listener.onEventListenerClicked("Success");
+                dispose();
+            }
+        } 
+        
+      } catch (SQLException e) {
+        Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, "Database error during update.", e);
+      }
+    }
     
    private void getImage(int id){
         String sqlQuery = "SELECT car_image FROM CARS WHERE CAR_ID = ?";
@@ -363,29 +384,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
         }
     }
 
-    
-    private void obliterateVehicle(int id){
-        String sqlQuery = "DELETE FROM CARS WHERE CAR_ID = ?";
-        
-        try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
-             PreparedStatement statement = con.prepareStatement(sqlQuery)) {
-
-            statement.setInt(1, id);
-            int rowsAffected = statement.executeUpdate();
-            
-            if(rowsAffected > 0){
-                 if (listener != null) {
-                     listener.onEventListenerClicked("Car Info Example");
-                     JOptionPane.showMessageDialog(this,"Car successfully obliterated!");
-                    }
-                 dispose();
-            }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-  
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CAR_ID;

@@ -40,13 +40,10 @@ public class ClientDrawerBuilder extends SimpleDrawerBuilder{
           String menus[][] = {
             {"~MAIN~"},
             {"Cars"},
-            {"~OTHERS~"},
-            {"Settings"},
             {"Logout"}};
 
          String icons[] = {
             "dashboard.svg",
-            "page.svg",
             "logout.svg"};
          
         return new SimpleMenuOption()
@@ -62,7 +59,7 @@ public class ClientDrawerBuilder extends SimpleDrawerBuilder{
                             WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel());  
                         }
                         
-                        if(index == 2){
+                        if(index == 1){
                             CurrentFormHolder.getInstance().closeCurrentForm(); // Close current form
                             Main main = new Main();
                             main.setVisible(true);

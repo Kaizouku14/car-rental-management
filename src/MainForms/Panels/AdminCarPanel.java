@@ -1,7 +1,6 @@
 package MainForms.Panels;
 
 import Components.tabbed.TabbedForm;
-import MainForms.AdminForm;
 import MainForms.Dialogs.ManageCarDialog;
 import Service.Database;
 import Utils.Utils; 
@@ -204,10 +203,12 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
   
     @Override
     public void onEventListenerClicked(String carInfo) {
+        
         if(carInfo.trim().isEmpty()){
             JOptionPane.showMessageDialog(this,"Car rejuvenated Failed!");
         }else{
-          renderDataToTable();  
+           renderDataToTable();  
+           registerTableRowSelectionListener();
         }
     }
 
@@ -229,9 +230,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                 if(rowsAffected > 0){
                     photoHolder_lbl.setIcon(null);
                     util.clearFields(this);
-                    
-                    new AdminForm().countAllCar();
-                    new AdminForm().countAvailableCars();
                     renderDataToTable();
                     registerTableRowSelectionListener();
                     
@@ -265,7 +263,7 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
         
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-           String path = selectedFile.getAbsolutePath();
+            String path = selectedFile.getAbsolutePath();
             
             try {      
                 BufferedImage bi = ImageIO.read(new File(path));
@@ -305,6 +303,7 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
              PreparedStatement statement = con.prepareStatement(sqlQuery);
              ResultSet result = statement.executeQuery()) {
              DefaultTableModel model = (DefaultTableModel) car_table.getModel();
+             model.setRowCount(0);
              
              while(result.next()){ 
                 if(result.getBoolean("AVAILABILITY")) rent_status = "available";

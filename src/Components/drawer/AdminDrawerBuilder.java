@@ -1,6 +1,5 @@
 package Components.drawer;
 
-import MainForms.Panels.AdminCarPanel;
 import Utils.CurrentFormHolder;
 import MainForms.Main;
 import raven.drawer.Drawer;
@@ -11,7 +10,7 @@ import raven.drawer.component.header.SimpleHeaderData;
 import raven.drawer.component.menu.*;
 import raven.swing.AvatarIcon;
 import Components.tabbed.WindowsTabbed;
-import MainForms.Panels.AdminRentedCars;
+import MainForms.Panels.*;
 
 public class AdminDrawerBuilder extends SimpleDrawerBuilder{
     
@@ -39,13 +38,10 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
           String menus[][] = {
             {"~MANAGE CARS~"},
             {"Car","Rented Cars"},
-            {"~OTHERS~"},
-            {"Settings"},
             {"Logout"}};
 
          String icons[] = {
             "dashboard.svg",
-            "page.svg",
             "logout.svg"};
          
         return new SimpleMenuOption()
@@ -57,14 +53,12 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
                     @Override
                     public void selected(MenuAction action, int index, int subIndex) {
                         
-                        if(index == 0){              
-                            
+                        if(index == 0){                
                             if(index == 0 && subIndex == 1)
                              WindowsTabbed.getInstance().addTab("Rented Card", new AdminRentedCars());
                             else
-                             WindowsTabbed.getInstance().addTab("Cars", new AdminCarPanel(CurrentFormHolder.getInstance().getCurrentForm()));
-                            
-                        }else if(index == 2){
+                             WindowsTabbed.getInstance().addTab("Cars", new AdminCarPanel(CurrentFormHolder.getInstance().getCurrentForm()));            
+                        }else if(index == 1){
                             CurrentFormHolder.getInstance().closeCurrentForm(); // Close current form
                             Main main = new Main();
                             main.setVisible(true);

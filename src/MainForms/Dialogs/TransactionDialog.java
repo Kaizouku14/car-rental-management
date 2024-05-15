@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 public class TransactionDialog extends javax.swing.JDialog {
     

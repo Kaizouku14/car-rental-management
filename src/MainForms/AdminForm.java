@@ -206,14 +206,13 @@ public class AdminForm extends javax.swing.JFrame {
     }
     
     public void countAvailableCars() {
-            int total_of_carAvailable = 0;
-            String sqlQuery = "SELECT COUNT(*) AS available_car_count FROM cars WHERE availability = ?";
+        int total_of_carAvailable = 0;
+        String sqlQuery = "SELECT COUNT(*) AS available_car_count FROM cars WHERE availability = ?";
 
             try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
                  PreparedStatement statement = con.prepareStatement(sqlQuery)) {
 
                 statement.setBoolean(1, true);  
-
                 try (ResultSet result = statement.executeQuery()) {
                     if (result.next()) {
                         int availableCarCount = result.getInt("available_car_count");
@@ -225,7 +224,7 @@ public class AdminForm extends javax.swing.JFrame {
             } catch (SQLException e) {
                 e.printStackTrace();
             }    
-        }
+    }
 
      public void setData() {
         List<ModelData> lists = new ArrayList<>();
@@ -287,5 +286,4 @@ public class AdminForm extends javax.swing.JFrame {
     private javax.swing.JLabel totalOfCars_lbl;
     // End of variables declaration//GEN-END:variables
 
-  
 }

@@ -6,6 +6,7 @@ public class Authentication{
     private String email;
     private String username;
     private String role;
+    private int id;
     private final Database db;
 
     public Authentication() {
@@ -23,7 +24,11 @@ public class Authentication{
      public String getRole() {
         return role;
     }
-
+     
+    public int getID(){
+        return id;
+    } 
+    
   public boolean authentication(String sqlQuery, String email, String password) {
     try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
          PreparedStatement statement = con.prepareStatement(sqlQuery);
@@ -33,6 +38,7 @@ public class Authentication{
             if (email.equals(result.getString("EMAIL")) &&
                 password.equals(result.getString("PASSWORD"))) {
 
+                 this.id = result.getInt("ACCOUNT_ID");
                  this.email = email;
                  this.username = result.getString("USERNAME");
                  this.role = result.getString("ROLE");
