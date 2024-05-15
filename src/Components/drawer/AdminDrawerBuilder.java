@@ -65,19 +65,6 @@ public class AdminDrawerBuilder extends SimpleDrawerBuilder{
                         }
                     }
                  });
-                      //Disable a menu 
-//         .setMenuValidation(new MenuValidation(){
-//                         @Override
-//                        public boolean menuValidation(int index, int subIndex) {
-//                            if(index==2){
-//                                return false;
-//                            }else if(index==3){
-//                                return false;
-//                            }
-//                            return true;
-//                            
-//                         }
-//              }); 
        }
 
     @Override

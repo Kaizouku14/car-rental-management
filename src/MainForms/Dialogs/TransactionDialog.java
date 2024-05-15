@@ -3,7 +3,7 @@ package MainForms.Dialogs;
 import static javax.swing.JOptionPane.showMessageDialog;
 import Service.Database;
 import Utils.EventListener;
-import Utils.Utils;
+import Utils.Helper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 
 public class TransactionDialog extends javax.swing.JDialog {
     
-     private Utils util;
+     private Helper util;
      private Database db;
      private int car_id;
      private boolean availability;
@@ -26,7 +26,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         initComponents();
         
      
-        util = new Utils();
+        util = new Helper();
         db = new Database();
         photoHolder_lbl.setIcon(image);
         car_name_lbl.setText(car_name);

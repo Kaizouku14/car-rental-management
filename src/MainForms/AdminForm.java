@@ -22,9 +22,7 @@ public class AdminForm extends javax.swing.JFrame {
     private Database db;
   
     public AdminForm(){
-        db = new Database();
-        countAllCar();
-        countAvailableCars();
+      //Default Constructor
     }
   
     public AdminForm(String username, String email) {
@@ -185,7 +183,6 @@ public class AdminForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    
      public void countAllCar(){
         int totalOfCars = 0;
         String sqlQuery = "SELECT COUNT(*) AS car_count FROM cars";
@@ -230,10 +227,10 @@ public class AdminForm extends javax.swing.JFrame {
         List<ModelData> lists = new ArrayList<>();
 
         String sql = "SELECT rent_start, " +
-                    "SUM(amount_to_pay) AS total_amount " +
-                    "FROM transaction " +
-                    "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
-                    "ORDER BY rent_start ASC LIMIT 7";
+                     "SUM(amount_to_pay) AS total_amount " +
+                     "FROM transaction " +
+                     "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
+                     "ORDER BY rent_start ASC LIMIT 7";
 
         try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = connection.prepareStatement(sql);

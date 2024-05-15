@@ -23,7 +23,7 @@ public class ClientDrawerBuilder extends SimpleDrawerBuilder{
                     .setDescription("Unknown");
     }
     
-     public void updateHeaderData(String username, String email) {
+    public void updateHeaderData(String username, String email) {
          SimpleHeaderData newHeaderData = new SimpleHeaderData()
             .setIcon(new AvatarIcon(getClass().getResource("/icons/icons8-user-24.png"), 60, 60, 999))
             .setTitle(username)
@@ -32,7 +32,7 @@ public class ClientDrawerBuilder extends SimpleDrawerBuilder{
         // Get the header from the Drawer
         SimpleHeader header = (SimpleHeader) Drawer.getInstance().getDrawerPanel().getDrawerBuilder().getHeader();
         header.setSimpleHeaderData(newHeaderData);   // Set the new header data
-     }
+    }
     
     
     public SimpleMenuOption getSimpleMenuOption() {

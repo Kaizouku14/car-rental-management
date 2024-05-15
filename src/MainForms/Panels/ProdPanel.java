@@ -10,25 +10,23 @@ import javax.swing.SwingUtilities;
 public class ProdPanel extends javax.swing.JPanel {
     
     private int no_of_seats , car_id;
-    private ImageIcon image2;
+    private ImageIcon car_image;
     private boolean availability;
     private EventListener listener;
 
-    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats, int car_id, boolean availability,
-                     EventListener listener) {
-       initComponents();
-        
-       Image scaledImage = image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-       image = new ImageIcon(scaledImage);
-       image2 = new ImageIcon(scaledImage);
-        
-       photoHolder_lbl.setIcon(image);
-       car_name_txt.setText(car_name);
-       price_txt.setText(String.valueOf(price)); 
+    public ProdPanel(ImageIcon image, String car_name, double price, int no_of_seats, 
+                 int car_id, boolean availability, EventListener listener){
        this.no_of_seats = no_of_seats;
        this.car_id = car_id;
        this.availability = availability;
        this.listener = listener;
+        
+       Image scaledImage = image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+       image = new ImageIcon(scaledImage);
+       car_image = new ImageIcon(scaledImage);
+        
+       initComponents(); 
+       setComponentsData(image , car_name, price);
     }
 
     @SuppressWarnings("unchecked")
@@ -109,13 +107,18 @@ public class ProdPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rent_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_btnActionPerformed
-        // TODO add your handling code here:
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        new TransactionDialog(parentFrame, true, image2, car_name_txt.getText(), no_of_seats,
+        new TransactionDialog(parentFrame, true, car_image, car_name_txt.getText(), no_of_seats,
                               Double.parseDouble(price_txt.getText()), car_id, availability , listener)
                               .setVisible(true);
     }//GEN-LAST:event_rent_btnActionPerformed
 
+    
+    private void setComponentsData(ImageIcon image ,String car_name ,double price){
+        photoHolder_lbl.setIcon(image);
+        car_name_txt.setText(car_name);
+        price_txt.setText(String.valueOf(price)); 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel car_name_txt;

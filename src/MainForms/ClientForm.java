@@ -26,7 +26,7 @@ public class ClientForm extends javax.swing.JFrame {
         WindowsTabbed.getInstance().install(this, body);
     }
     
-    public void showMainForm() {
+    public void showMainForm() { 
         WindowsTabbed.getInstance().showTabbed(true);
         WindowsTabbed.getInstance().removeAllTabbed();
         setContentPane(body);
@@ -135,7 +135,6 @@ public class ClientForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rent_now_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_now_btnActionPerformed
-        // TODO add your handling code here:
         WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel());
     }//GEN-LAST:event_rent_now_btnActionPerformed
 

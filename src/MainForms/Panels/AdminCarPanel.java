@@ -3,19 +3,15 @@ package MainForms.Panels;
 import Components.tabbed.TabbedForm;
 import MainForms.Dialogs.ManageCarDialog;
 import Service.Database;
-import Utils.Utils; 
+import Utils.Helper; 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import java.sql.*;
+import javax.swing.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -27,13 +23,13 @@ import Utils.EventListener;
 
 public class AdminCarPanel extends TabbedForm implements EventListener{
     
-    private String car_name, path2;
+    private String car_name, carImage_path;
     private int no_of_seats;
     private double rent_price;
     private boolean availability = true;
     private JFrame parentFrame;
     private Database db;
-    private Utils util;
+    private Helper helper;
     
     public AdminCarPanel(){
         //default constructor
@@ -42,7 +38,8 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
     public AdminCarPanel(JFrame frame) {
         this.parentFrame = frame;
         db = new Database();
-        util = new Utils();
+        helper = new Helper();
+        
         initComponents();
         renderDataToTable();
         registerTableRowSelectionListener();
@@ -203,9 +200,8 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
   
     @Override
     public void onEventListenerClicked(String carInfo) {
-        
         if(carInfo.trim().isEmpty()){
-            JOptionPane.showMessageDialog(this,"Car rejuvenated Failed!");
+            JOptionPane.showMessageDialog(this,"Updating car info failed");
         }else{
            renderDataToTable();  
            registerTableRowSelectionListener();
@@ -213,70 +209,62 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
     }
 
     private void add_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_btnActionPerformed
-        // TODO add your handling code here:
       String sqlQuery = "INSERT INTO CARS (CAR_NAME, NO_OF_SEATS ,RENT_PRICE ,AVAILABILITY, CAR_IMAGE) VALUES(?,?,?,?,?)";
 
-        if(util.fieldChecker(this) && photoHolder_lbl.getIcon() == null){
-            showMessageDialog(this,"Please fill up all the textfields");
+        if(helper.fieldChecker(this)){
+           JOptionPane.showMessageDialog(this,"Please fill up all the textfields!","Required", JOptionPane.ERROR_MESSAGE);
+        }else if(photoHolder_lbl.getIcon() == null){
+           JOptionPane.showMessageDialog(this,"Please add a picture before adding the car!","Required", JOptionPane.ERROR_MESSAGE);
         }else{
             car_name = carName_txt.getText();   
             no_of_seats = Integer.parseInt(noSeaters_txt.getText());
             rent_price = Double.parseDouble(rent_price_txt.getText()); 
             
           try {
-              InputStream is = new FileInputStream(new File(path2));      
-              int rowsAffected = insertData(sqlQuery, car_name, no_of_seats, rent_price ,availability ,is);
+              InputStream carImage = new FileInputStream(new File(carImage_path));      
+              int rowsAffected = insertData(sqlQuery, car_name, no_of_seats, rent_price ,availability ,carImage);
            
                 if(rowsAffected > 0){
                     photoHolder_lbl.setIcon(null);
-                    util.clearFields(this);
+                    helper.clearFields(this);
                     renderDataToTable();
                     registerTableRowSelectionListener();
                     
-                   showMessageDialog(this,"Added Successfully!");  
+                 JOptionPane.showMessageDialog(this,"Added Successfully!");  
                }else{
-                   showMessageDialog(this,"Insertion failed!"); 
+                 JOptionPane.showMessageDialog(this,"Insertion failed!","Error", JOptionPane.ERROR_MESSAGE); 
                }
     
           } catch (FileNotFoundException ex) {
-              Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
           }
         }
     }//GEN-LAST:event_add_btnActionPerformed
 
     private void availability_cbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_availability_cbActionPerformed
-        // TODO add your handling code here:
         if(!availability_cb.isSelected()){
             availability = false;
         }
     }//GEN-LAST:event_availability_cbActionPerformed
 
     private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
-        // TODO add your handling code here:
-            browseImage();
-    }//GEN-LAST:event_uploadImageActionPerformed
-
-    public void browseImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int result = fileChooser.showOpenDialog(this);
-        
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String path = selectedFile.getAbsolutePath();
+        try {
+            carImage_path = helper.browseImage(this);
             
-            try {      
-                BufferedImage bi = ImageIO.read(new File(path));
-                Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);   
-                ImageIcon icon = new ImageIcon(image);
-                photoHolder_lbl.setIcon(icon); 
-                path2 = path;
-            } catch (IOException ex) {
-                Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
+            if(carImage_path == null){
+               JOptionPane.showMessageDialog(this,"Please select a photo!","Error", JOptionPane.ERROR_MESSAGE); 
+            }else{
+               BufferedImage bi = ImageIO.read(new File(carImage_path));
+               Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);
+               ImageIcon icon = new ImageIcon(image); 
+               photoHolder_lbl.setIcon(icon);
             }
+            
+        } catch (IOException ex) {
+            Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }   
-    
+    }//GEN-LAST:event_uploadImageActionPerformed
+  
     public int insertData(String sqlQuery, String car_name, int no_of_seats, double rent_price, boolean availability, InputStream imageStream){
         try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = con.prepareStatement(sqlQuery)) {
@@ -321,16 +309,16 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
     }   
 
     
-     private void registerTableRowSelectionListener() {
+    private void registerTableRowSelectionListener() {
         ListSelectionModel selectionModel = car_table.getSelectionModel();
         EventListener listener = this;
+        
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
-                int selectedRow = car_table.getSelectedRow();
-                 if (selectedRow != -1) {  
-                     
-                    Object[] data = new Object[5];
+                 int selectedRow = car_table.getSelectedRow();
+                    if (selectedRow != -1) {  
+                     Object[] data = new Object[5];
 
                     for(int i = 0; i < data.length; i++){
                         data[i] = car_table.getValueAt(selectedRow, i);
@@ -339,11 +327,11 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                     new ManageCarDialog(parentFrame ,true ,(int) data[0] ,(String) data[1] ,(int) data[2] ,
                             (double) data[3] ,(String) data[4] , listener)
                                 .setVisible(true);
-                 }
-               }
-             }
-          });
-     }
+                    }
+                }
+            }
+        });
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton add_btn;

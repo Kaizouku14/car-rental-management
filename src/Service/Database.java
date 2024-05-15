@@ -1,5 +1,6 @@
 package Service;
 
+
 public class Database {
     
     private final String url = "jdbc:MySQL://localhost:3306/car_rental";
@@ -16,6 +17,6 @@ public class Database {
     
     public String getPass(){
         return this.pass;
-    }
+    }    
     
 }

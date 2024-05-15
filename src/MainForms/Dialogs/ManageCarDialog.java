@@ -11,9 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import Utils.EventListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import Utils.Helper;
 
 public class ManageCarDialog extends javax.swing.JDialog {
         
@@ -24,20 +23,13 @@ public class ManageCarDialog extends javax.swing.JDialog {
 
     public ManageCarDialog(java.awt.Frame parent, boolean modal, int car_id ,String car_name ,int no_of_seats ,
                            double rent_price ,String availability , EventListener listener) {
-        super(parent, modal);
-        initComponents();
-        
-       db = new Database();
+       super(parent, modal);
        this.listener = listener;
-       if(availability.equals("available")){
-           available_cb.setSelected(true);
-       }
-       
-       CAR_ID.setText(String.valueOf(car_id));
-       car_name_txt.setText(car_name);
-       No_of_seats_txt.setText(String.valueOf(no_of_seats));
-       rent_price_txt.setText(String.valueOf(rent_price));
        this.id = car_id;
+       db = new Database();
+         
+       initComponents();
+       setComponentsData(car_id, car_name, no_of_seats, rent_price, availability);
        getImage(car_id);
     }
 
@@ -208,63 +200,56 @@ public class ManageCarDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
-        // TODO add your handling code here:
-       browseImage();
-    }//GEN-LAST:event_uploadImageActionPerformed
-
-    public void browseImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-        // Set the file filter to accept PNG, JPEG, JPG, and WAV files
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "PNG, JPEG, JPG, and WAV files",
-                "png", "jpeg", "jpg", "wav");
-        fileChooser.setFileFilter(filter);
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String path = selectedFile.getAbsolutePath();
-
-            try {
-                if (path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".jpg")) {
-                    BufferedImage bi = ImageIO.read(new File(path));
-                    Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);
-                    ImageIcon icon = new ImageIcon(image);
-                    photoHolder_lbl.setIcon(icon);
-
-                    this.path = path;
-                } else {
-                    JOptionPane.showMessageDialog(this, "Selected file is not a supported image format.", "Invalid File", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+    private void setComponentsData(int car_id, String car_name, int no_of_seats, double rent_price, String availability){
+       CAR_ID.setText(String.valueOf(car_id));
+       car_name_txt.setText(car_name);
+       No_of_seats_txt.setText(String.valueOf(no_of_seats));
+       rent_price_txt.setText(String.valueOf(rent_price));
+       
+       if(availability.equals("available")){
+           available_cb.setSelected(true);
+       }
     }
     
+    private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
+      try {
+            Helper helper = new Helper();
+            path = helper.browseImage(this);
+            
+            if(path == null){
+               JOptionPane.showMessageDialog(this,"Please select a photo!","Error", JOptionPane.ERROR_MESSAGE); 
+            }else{
+               BufferedImage bi = ImageIO.read(new File(path));
+               Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);
+               ImageIcon icon = new ImageIcon(image); 
+               photoHolder_lbl.setIcon(icon);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(AdminCarPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_uploadImageActionPerformed
+    
     private void edit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_buttonActionPerformed
-        // TODO add your handling code here:
          int result = JOptionPane.showConfirmDialog(this,"Are you sure you want to toggle edit?", "Edit",
                JOptionPane.YES_NO_OPTION,
                JOptionPane.QUESTION_MESSAGE);
       
         if(result ==  JOptionPane.YES_NO_OPTION){       
             JOptionPane.showMessageDialog(this,"Edit enabled");
-            car_name_txt.setEnabled(true);
-            No_of_seats_txt.setEnabled(true);
-            rent_price_txt.setEnabled(true);
-            available_cb.setEnabled(true);
-            uploadImage.setEnabled(true);
-            update_button.setEnabled(true);
+            setEnable();
         }
     }//GEN-LAST:event_edit_buttonActionPerformed
     
+    private void setEnable(){
+        car_name_txt.setEnabled(true);
+        No_of_seats_txt.setEnabled(true);
+        rent_price_txt.setEnabled(true);
+        available_cb.setEnabled(true);
+        uploadImage.setEnabled(true);
+        update_button.setEnabled(true);
+    }
+    
     private void delete_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_buttonActionPerformed
-        // TODO add your handling code here:
        int result = JOptionPane.showConfirmDialog(this,"Are you sure you want to toggle edit?", "Edit",
                JOptionPane.YES_NO_OPTION,
                JOptionPane.QUESTION_MESSAGE);
@@ -288,7 +273,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
                      listener.onEventListenerClicked("Car Info Example");
                      JOptionPane.showMessageDialog(this,"Car successfully removed!");
                     }
-                 dispose();
+                dispose();
             }
             
         } catch (SQLException e) {
@@ -297,7 +282,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
     }
   
     private void update_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_buttonActionPerformed
-        // TODO add your handling code here:
        int result = JOptionPane.showConfirmDialog(this,"Are you sure you want to Update car information?", "Update",
                JOptionPane.YES_NO_OPTION,
                JOptionPane.QUESTION_MESSAGE);
@@ -333,7 +317,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
       try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
            PreparedStatement statement = con.prepareStatement(sqlQuery)) {
 
-           InputStream is = new FileInputStream(new File(path));
+            InputStream is = new FileInputStream(new File(path));
             statement.setString(1, car_name);
             statement.setInt(2, no_of_seats);
             statement.setDouble(3, rent_price);

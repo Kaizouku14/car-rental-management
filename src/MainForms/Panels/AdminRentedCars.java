@@ -16,8 +16,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-//Car status `rented or returned`
-
 public class AdminRentedCars extends TabbedForm {
 
     private Database db;
@@ -25,9 +23,11 @@ public class AdminRentedCars extends TabbedForm {
     public AdminRentedCars() {
         db = new Database();
         initComponents();
+        
         transaction_chart.setTitle("Transaction Per Month");
         transaction_chart.addLegend("Costumers", Color.decode("#0099F7"), Color.decode("#F11712"));
         transaction_chart.addLegend("Rented Cars", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        
         renderDataToTable("SELECT * FROM TRANSACTION", "");
         registerTableRowSelectionListener();
         setData();
@@ -114,13 +114,12 @@ public class AdminRentedCars extends TabbedForm {
     }// </editor-fold>//GEN-END:initComponents
 
     private void search_bar_txtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search_bar_txtFocusGained
-        // TODO add your handling code here:
         search_bar_txt.setText("");
     }//GEN-LAST:event_search_bar_txtFocusGained
 
     private void search_bar_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_bar_txtKeyTyped
-        // TODO add your handling code here:
-     String searchText = search_bar_txt.getText().trim();
+        String searchText = search_bar_txt.getText().trim();
+        
         if(searchText.isEmpty()){
             renderDataToTable("SELECT * FROM TRANSACTION", "");
         } else {
@@ -132,7 +131,7 @@ public class AdminRentedCars extends TabbedForm {
       populateTable(sqlQuery, searchParam);
     }
 
-   private void filterSearch(String sqlQuery, String searchParam) {
+    private void filterSearch(String sqlQuery, String searchParam) {
         populateTable(sqlQuery, "%" + searchParam + "%");
     }
 
@@ -171,14 +170,15 @@ public class AdminRentedCars extends TabbedForm {
     
     private void registerTableRowSelectionListener() {
         ListSelectionModel selectionModel = transaction_table.getSelectionModel();
+        
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                if (!e.getValueIsAdjusting()) {  // Check if the event is not in the process of changing
                 int selectedRow = transaction_table.getSelectedRow();
-                 if (selectedRow != -1) {  
-                   Object id =  transaction_table.getValueAt(selectedRow, 0);
-                   Object car_id = transaction_table.getValueAt(selectedRow,3);
-                   manageTransaction((int) id , (int) car_id);  
+                  if (selectedRow != -1) {  
+                    Object id =  transaction_table.getValueAt(selectedRow, 0);
+                    Object car_id = transaction_table.getValueAt(selectedRow,3);
+                    manageTransaction((int) id , (int) car_id);  
                  }
                }
             }
@@ -218,7 +218,7 @@ public class AdminRentedCars extends TabbedForm {
        } 
     } 
     
-      public void setData() {
+    public void setData() {
         List<TransactionModel> lists = new ArrayList<>();
 
         String sql = "SELECT rent_start, " +

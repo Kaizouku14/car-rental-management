@@ -2,21 +2,21 @@ package MainForms;
 
 import Service.*;
 import Utils.*;
-import static javax.swing.JOptionPane.showMessageDialog;
-import java.awt.event.ActionListener;
 import java.sql.*;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class SignInForm extends javax.swing.JPanel {
 
     private String username , email , password;
-    private Utils util;
+    private Helper util;
     private Database db;
     private Authentication auth;
     
     public SignInForm() {
         initComponents();
-        util = new Utils();
+        util = new Helper();
         db = new Database();
         auth = new Authentication();
     }
@@ -180,7 +180,7 @@ public class SignInForm extends javax.swing.JPanel {
     private void register_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_register_buttonActionPerformed
         // TODO add your handling code here:
         if(util.fieldChecker(signinPanel)){
-            showMessageDialog(signinPanel, "Please fill up all the required fields!");
+            JOptionPane.showMessageDialog(signinPanel, "Please fill up all the required fields!");
         }else{  
             
             if(passwordMatchChecker()){
@@ -189,16 +189,16 @@ public class SignInForm extends javax.swing.JPanel {
                 password = password_txt.getText();
                 
                 if(auth.checkEmail(email)){    
-                   showMessageDialog(signinPanel, "This email is alredy in use, please try other email!");
+                  JOptionPane.showMessageDialog(signinPanel, "This email is alredy in use, please try other email!");
                 }else{
                    if(insertData(username, email, password)){
                       util.clearFields(signinPanel);
-                      Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this);   // switch to login form
+                      Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this); // switch to login form
                       mainFrame.switchToLoginForm();
                    }
                 }
             }else{
-               showMessageDialog(signinPanel, "password does not match!"); 
+             JOptionPane.showMessageDialog(signinPanel, "password does not match!"); 
             }
         }
     }//GEN-LAST:event_register_buttonActionPerformed

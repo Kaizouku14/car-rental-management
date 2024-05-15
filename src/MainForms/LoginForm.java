@@ -1,19 +1,19 @@
 package MainForms;
 
 import Service.Authentication;
-import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
-import Utils.Utils;
+import javax.swing.JOptionPane;
+import Utils.Helper;
 
 public class LoginForm extends javax.swing.JPanel {
 
-    private String email , password , role;
-    private final Utils util;
+    private String email , password;
+    private final Helper util;
     
     public LoginForm() {
         initComponents();
-        util = new Utils();
+        util = new Helper();
     }
     
     public void addEventRegister(ActionListener event) {
@@ -167,20 +167,17 @@ public class LoginForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void login_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_buttonActionPerformed
-        // TODO add your handling code here:
         String sqlQuery = "SELECT * FROM ACCOUNTS";
         
         if(util.fieldChecker(loginPanel)){
-            showMessageDialog(loginPanel, "Please fill up all the required fields!");
+            JOptionPane.showMessageDialog(loginPanel, "Please fill up all the required fields!");
         }else{
+            Authentication auth = new Authentication();
             email = email_txt.getText();
             password = password_txt.getText();
             
-            Authentication auth = new Authentication();
-          
            if(auth.authentication(sqlQuery, email, password)){
-               //Dispose of the current frame containing the loginPanel   
-               SwingUtilities.getWindowAncestor(loginPanel).dispose();
+               SwingUtilities.getWindowAncestor(loginPanel).dispose(); //Dispose of the current frame containing the loginPanel   
                
                if(auth.getRole().equals("Admin")){
                   AdminForm admin = new AdminForm(auth.getUsername(), auth.getEmail());
@@ -190,14 +187,13 @@ public class LoginForm extends javax.swing.JPanel {
                   client.setVisible(true);
                }
            }else{
-              showMessageDialog(loginPanel, "Login Failed : Incorrect username or password");
+              JOptionPane.showMessageDialog(loginPanel, "Login Failed : Incorrect username or password");
            }
         } 
     }//GEN-LAST:event_login_buttonActionPerformed
 
     private void exit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exit_buttonActionPerformed
-        // TODO add your handling code here:
-        System.exit(0);
+         System.exit(0); //Exit program
     }//GEN-LAST:event_exit_buttonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

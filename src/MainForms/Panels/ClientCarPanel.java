@@ -26,7 +26,7 @@ public class ClientCarPanel extends TabbedForm implements EventListener {
         jPanel1.add(scrollPane); 
     }
     
-       @Override
+    @Override
     public void onEventListenerClicked(String carInfo) {
          if(carInfo.trim().isEmpty()){
             JOptionPane.showMessageDialog(this,"transaction failed!");
@@ -62,12 +62,14 @@ public class ClientCarPanel extends TabbedForm implements EventListener {
                         
                     temp.add(carData);
                   }
+                  
+                return temp;
               }
           } catch (SQLException e) {
               e.printStackTrace();
           }
 
-          return temp;
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -115,8 +117,9 @@ public class ClientCarPanel extends TabbedForm implements EventListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void search_bar_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_bar_txtKeyTyped
-        // TODO add your handling code here:
-        if(search_bar_txt.getText().trim().isEmpty()){
+       String searchText = search_bar_txt.getText().trim();
+       
+        if(searchText.isEmpty()){
             renderCars();
         }else{
            filterSearch(search_bar_txt.getText());
