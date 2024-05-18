@@ -1,16 +1,8 @@
 package Utils;
 
-import Main.Panels.AdminCarPanel;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -18,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Helper {
     
+    //Empty TextFields Checker
      public boolean fieldChecker(Container container) {
         for (Component c : container.getComponents()) {
             if (c instanceof JTextField jTextField) {
@@ -30,7 +23,8 @@ public class Helper {
         return false; 
      }
      
-      public void clearFields(Container container){
+     //Clear all the TextFields
+      public void clearFields(Container container){ 
          for (Component c : container.getComponents()) {
             if (c instanceof JTextField jTextField) {
                  jTextField.setText("");
@@ -48,14 +42,14 @@ public class Helper {
                 "png", "jpeg", "jpg", "wav");
         fileChooser.setFileFilter(filter);
 
-        int result = fileChooser.showOpenDialog(parent);
+        int result = fileChooser.showOpenDialog(parent); 
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             String path = selectedFile.getAbsolutePath();
 
             if (path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".jpg")) {
-                  return path;
+               return path;
             }else{
                 JOptionPane.showMessageDialog(parent, "Selected file is not a supported image format.", "Invalid File", JOptionPane.ERROR_MESSAGE);
             }

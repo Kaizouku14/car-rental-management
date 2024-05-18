@@ -174,12 +174,12 @@ public class LoginForm extends javax.swing.JPanel {
            if(auth.authentication(sqlQuery, email, password)){
                SwingUtilities.getWindowAncestor(loginPanel).dispose(); //Dispose of the current frame containing the loginPanel   
                
-               if(auth.getRole().equals("Admin")){
+               if(auth.getRole().equals("Admin")){ 
                   AdminForm admin = new AdminForm(auth.getUsername(), auth.getEmail());
-                  admin.setVisible(true);
-               }else{
+                  admin.setVisible(true); //Open admin form
+               }else{ 
                   ClientForm client = new ClientForm(auth.getUsername(), auth.getEmail());
-                  client.setVisible(true);
+                  client.setVisible(true); //Open client form
                }
            }else{
               JOptionPane.showMessageDialog(loginPanel, "Login Failed : Incorrect username or password");

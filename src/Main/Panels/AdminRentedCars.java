@@ -228,7 +228,6 @@ public class AdminRentedCars extends TabbedForm {
              "GROUP BY MONTH(rent_start), YEAR(rent_start) " +
              "ORDER BY rent_start ASC LIMIT 7";
 
-
         try (Connection connection = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -239,7 +238,7 @@ public class AdminRentedCars extends TabbedForm {
                 double total_cars_borrowed = resultSet.getDouble("total_cars_borrowed");
         
                 String monthName = date.format(DateTimeFormatter.ofPattern("MMMM"));
-                lists.add(new TransactionModel(monthName,total_of_costumers,total_cars_borrowed ));
+                lists.add(new TransactionModel(monthName,total_of_costumers,total_cars_borrowed));
             }
 
             for (TransactionModel d : lists) {

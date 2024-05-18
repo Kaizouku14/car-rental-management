@@ -38,13 +38,9 @@
                                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="add_btn" alignment="0" min="-2" pref="136" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Component id="noSeaters_txt" min="-2" pref="232" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
-                                      <Component id="availability_cb" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="noSeaters_txt" min="-2" pref="232" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="175" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -99,13 +95,10 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="noSeaters_txt" min="-2" pref="40" max="-2" attributes="0"/>
-                          <Component id="availability_cb" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="noSeaters_txt" min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="54" max="32767" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="185" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
           </Group>
@@ -149,15 +142,6 @@
           </Border>
         </Property>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="availability_cb">
-      <Properties>
-        <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="Available"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="availability_cbActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="noSeaters_txt">
       <Properties>

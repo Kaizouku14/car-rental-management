@@ -36,13 +36,13 @@ public class AdminForm extends javax.swing.JFrame {
         initComponents();
         WindowsTabbed.getInstance().install(this, body);
         
-        chart.setTitle("Profit Per Month");
-        chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
+        chart.setTitle("Profit Per Month"); //Set the char title
+        chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712")); //Set chart category
         
         db = new Database();
-        setData();
-        countAllCar();
-        countAvailableCars();
+        setData(); //Set and Render data in the chart
+        countAllCar(); //Count and render all the cars in the table
+        countAvailableCars(); //Count and render all the available cars
     }
    
     @SuppressWarnings("unchecked")

@@ -16,20 +16,22 @@ public class ClientForm extends javax.swing.JFrame {
   
     public ClientForm(String username, String email) {
         
-        GlassPanePopup.install(this);
-        ClientDrawerBuilder drawerBuilder = new ClientDrawerBuilder ();  
-        Drawer.getInstance().setDrawerBuilder(drawerBuilder);
-        CurrentFormHolder.getInstance().setCurrentForm(this);
-        drawerBuilder.updateHeaderData(username, email);
+        GlassPanePopup.install(this); // Enable custom glass pane functionality for this component
+        ClientDrawerBuilder drawerBuilder = new ClientDrawerBuilder ();   
+        Drawer.getInstance().setDrawerBuilder(drawerBuilder); // Set the drawer builder for the Drawer singleton
+        CurrentFormHolder.getInstance().setCurrentForm(this); // Register this component as the current form in the CurrentFormHolder singleton
+        drawerBuilder.updateHeaderData(username, email); // Update drawer header with username and email
         
         initComponents();
-        WindowsTabbed.getInstance().install(this, body);
+        WindowsTabbed.getInstance().install(this, body); // Install WindowsTabbed in this form with the specified body component
     }
     
     public void showMainForm() { 
-        WindowsTabbed.getInstance().showTabbed(true);
-        WindowsTabbed.getInstance().removeAllTabbed();
-        setContentPane(body);
+        WindowsTabbed.getInstance().showTabbed(true); // Show the tabbed interface
+        WindowsTabbed.getInstance().removeAllTabbed(); // Remove all tabs
+        setContentPane(body); // Set content pane to body
+        
+        // Refresh the container
         revalidate();
         repaint();
     }
@@ -135,7 +137,7 @@ public class ClientForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rent_now_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rent_now_btnActionPerformed
-        WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel());
+        WindowsTabbed.getInstance().addTab("Cars", new ClientCarPanel()); //Open CarPanel
     }//GEN-LAST:event_rent_now_btnActionPerformed
 
     public static void clientForm(String args[]) {

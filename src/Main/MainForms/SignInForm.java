@@ -25,6 +25,7 @@ public class SignInForm extends javax.swing.JPanel {
        singup_link.addActionListener(event);
     }
 
+       
     private boolean passwordMatchChecker(){
         return password_txt.getText().equals(confirmpass_txt.getText());
     }
@@ -173,36 +174,37 @@ public class SignInForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void exit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exit_buttonActionPerformed
-        // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_exit_buttonActionPerformed
 
     private void register_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_register_buttonActionPerformed
-        // TODO add your handling code here:
-        if(util.fieldChecker(signinPanel)){
+        if(util.fieldChecker(signinPanel)){  //Check if there's an empty field.
             JOptionPane.showMessageDialog(signinPanel, "Please fill up all the required fields!");
         }else{  
             
-            if(passwordMatchChecker()){
+            if(passwordMatchChecker()){ //Check if the password and confirm password match.
                 username = username_txt.getText();
                 email = email_txt.getText();
                 password = password_txt.getText();
                 
-                if(auth.checkEmail(email)){    
+                if(auth.checkEmail(email)){ //Check if email already exist in the account table.
                   JOptionPane.showMessageDialog(signinPanel, "This email is alredy in use, please try other email!");
                 }else{
                    if(insertData(username, email, password)){
-                      util.clearFields(signinPanel);
-                      Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this); // switch to login form
-                      mainFrame.switchToLoginForm();
+                      util.clearFields(signinPanel); //clear all the fields
+                            
+                      //Cast the parent window of the current component /to a Main instance
+                      Main mainFrame = (Main) SwingUtilities.getWindowAncestor(this); 
+                      mainFrame.switchToLoginForm(); // switch to login form   
                    }
                 }
             }else{
-             JOptionPane.showMessageDialog(signinPanel, "password does not match!"); 
+              JOptionPane.showMessageDialog(signinPanel, "password does not match!"); 
             }
         }
     }//GEN-LAST:event_register_buttonActionPerformed
 
+    //Inserting client credentials in accounts table
     private boolean insertData(String username ,String email ,String password){
         
        String sqlQuery = "INSERT INTO ACCOUNTS(USERNAME , EMAIL , PASSWORD, ROLE) VALUES(?,?,?,?)";

@@ -23,7 +23,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
     private String car_name, carImage_path;
     private int no_of_seats;
     private double rent_price;
-    private boolean availability = true;
     private JFrame parentFrame;
     private Database db;
     private Helper helper;
@@ -49,7 +48,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
         photoHolder_lbl = new javax.swing.JLabel();
         add_btn = new javax.swing.JButton();
         carName_txt = new javax.swing.JTextField();
-        availability_cb = new javax.swing.JCheckBox();
         noSeaters_txt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -74,14 +72,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
         });
 
         carName_txt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-
-        availability_cb.setSelected(true);
-        availability_cb.setText("Available");
-        availability_cb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                availability_cbActionPerformed(evt);
-            }
-        });
 
         noSeaters_txt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
 
@@ -142,11 +132,8 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                                         .addGap(224, 224, 224)
                                         .addComponent(jLabel3))
                                     .addComponent(add_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(60, 60, 60)
-                                        .addComponent(availability_cb)))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 175, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(carName_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -186,10 +173,8 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(availability_cb))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(noSeaters_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(87, 87, 87))
         );
@@ -219,7 +204,7 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
             
           try {
               InputStream carImage = new FileInputStream(new File(carImage_path));      
-              int rowsAffected = insertData(sqlQuery, car_name, no_of_seats, rent_price ,availability ,carImage);
+              int rowsAffected = insertData(sqlQuery, car_name, no_of_seats, rent_price,carImage);
            
                 if(rowsAffected > 0){
                     photoHolder_lbl.setIcon(null);
@@ -237,12 +222,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
           }
         }
     }//GEN-LAST:event_add_btnActionPerformed
-
-    private void availability_cbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_availability_cbActionPerformed
-        if(!availability_cb.isSelected()){
-            availability = false;
-        }
-    }//GEN-LAST:event_availability_cbActionPerformed
 
     private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
         try {
@@ -262,14 +241,14 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
         }
     }//GEN-LAST:event_uploadImageActionPerformed
   
-    public int insertData(String sqlQuery, String car_name, int no_of_seats, double rent_price, boolean availability, InputStream imageStream){
+    public int insertData(String sqlQuery, String car_name, int no_of_seats, double rent_price, InputStream imageStream){
         try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
              PreparedStatement statement = con.prepareStatement(sqlQuery)) {
              
             statement.setString(1, car_name);
             statement.setInt(2, no_of_seats);
             statement.setDouble(3, rent_price);
-            statement.setBoolean(4, availability);
+            statement.setBoolean(4, true);
             statement.setBlob(5, imageStream);
             
             return statement.executeUpdate();
@@ -294,11 +273,12 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                 if(result.getBoolean("AVAILABILITY")) rent_status = "available";
                 else rent_status = "rented";    
                 
+              if(result.getBoolean("AVAILABILITY")){
                 Object[] row = {result.getInt("CAR_ID"), result.getString("CAR_NAME"), result.getInt("NO_OF_SEATS"), 
                                 result.getDouble("RENT_PRICE"), rent_status};
              
                 model.addRow(row);
-             
+              }  
             }
         }catch(SQLException e) {
             e.printStackTrace();
@@ -332,7 +312,6 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton add_btn;
-    private javax.swing.JCheckBox availability_cb;
     private javax.swing.JTextField carName_txt;
     private javax.swing.JTable car_table;
     private javax.swing.JLabel jLabel1;

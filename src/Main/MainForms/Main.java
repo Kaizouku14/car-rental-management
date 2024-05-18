@@ -30,7 +30,7 @@ import javax.swing.UIManager;
     }
    
     public void switchToLoginForm() {
-        slidepanel.show(0);
+        slidepanel.show(0); 
     }
 
     @SuppressWarnings("unchecked")

@@ -218,8 +218,8 @@ public class ManageCarDialog extends javax.swing.JDialog {
             if(path == null){
                JOptionPane.showMessageDialog(this,"Please select a photo!","Error", JOptionPane.ERROR_MESSAGE); 
             }else{
-               BufferedImage bi = ImageIO.read(new File(path));
-               Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH);
+               BufferedImage bi = ImageIO.read(new File(path)); 
+               Image image = bi.getScaledInstance(150, 172, Image.SCALE_SMOOTH); //Set the size of image
                ImageIcon icon = new ImageIcon(image); 
                photoHolder_lbl.setIcon(icon);
             }
@@ -274,7 +274,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
                     }
                 dispose();
             }
-            
         } catch (SQLException e) {
             e.printStackTrace();
         }
