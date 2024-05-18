@@ -22,14 +22,14 @@ public class ManageCarDialog extends javax.swing.JDialog {
     private String path;
 
     public ManageCarDialog(java.awt.Frame parent, boolean modal, int car_id ,String car_name ,int no_of_seats ,
-                           double rent_price ,String availability , EventListener listener) {
+                           double rent_price , EventListener listener) {
        super(parent, modal);
        this.listener = listener;
        this.id = car_id;
        db = new Database();
          
        initComponents();
-       setComponentsData(car_id, car_name, no_of_seats, rent_price, availability);
+       setComponentsData(car_id, car_name, no_of_seats, rent_price);
        getImage(car_id);
     }
 
@@ -50,7 +50,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        available_cb = new javax.swing.JCheckBox();
         photoHolder_lbl = new javax.swing.JLabel();
         uploadImage = new javax.swing.JButton();
 
@@ -106,9 +105,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("RENT PRICE");
 
-        available_cb.setText("Available");
-        available_cb.setEnabled(false);
-
         photoHolder_lbl.setBackground(new java.awt.Color(153, 153, 153));
         photoHolder_lbl.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         photoHolder_lbl.setIconTextGap(0);
@@ -130,8 +126,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(available_cb)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(update_button, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(delete_button, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -191,23 +186,19 @@ public class ManageCarDialog extends javax.swing.JDialog {
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(update_button, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(delete_button, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(available_cb))
+                    .addComponent(delete_button, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void setComponentsData(int car_id, String car_name, int no_of_seats, double rent_price, String availability){
+    private void setComponentsData(int car_id, String car_name, int no_of_seats, double rent_price){
        CAR_ID.setText(String.valueOf(car_id));
        car_name_txt.setText(car_name);
        No_of_seats_txt.setText(String.valueOf(no_of_seats));
        rent_price_txt.setText(String.valueOf(rent_price));
-       
-       if(availability.equals("available")){
-           available_cb.setSelected(true);
-       }
+      
     }
     
     private void uploadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageActionPerformed
@@ -243,7 +234,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
         car_name_txt.setEnabled(true);
         No_of_seats_txt.setEnabled(true);
         rent_price_txt.setEnabled(true);
-        available_cb.setEnabled(true);
         uploadImage.setEnabled(true);
         update_button.setEnabled(true);
     }
@@ -290,28 +280,27 @@ public class ManageCarDialog extends javax.swing.JDialog {
                String car_name = car_name_txt.getText();
                int no_of_seats = Integer.parseInt(No_of_seats_txt.getText());
                double rent_price = Double.parseDouble(rent_price_txt.getText());
-               boolean availability = available_cb.isSelected();
                String path = this.path;
                
-               updateVehicle(id ,car_name ,no_of_seats ,rent_price ,availability , path);
+               updateVehicle(id ,car_name ,no_of_seats ,rent_price, path);
            } catch (IOException ex) {
                Logger.getLogger(ManageCarDialog.class.getName()).log(Level.SEVERE, null, ex);
            }
        }
     }//GEN-LAST:event_update_buttonActionPerformed
     
-   private void updateVehicle(int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {      
+   private void updateVehicle(int id, String car_name, int no_of_seats, double rent_price, String path) throws IOException {      
       String sqlQueryWithImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ?, CAR_IMAGE = ? WHERE CAR_ID = ?";
       String sqlQueryWithoutImage = "UPDATE CARS SET CAR_NAME = ?, NO_OF_SEATS = ?, RENT_PRICE = ?, AVAILABILITY = ? WHERE CAR_ID = ?";
 
       if (path == null) {
-            updateVehicleInfo(sqlQueryWithoutImage, id, car_name, no_of_seats, rent_price, availability, null);
+            updateVehicleInfo(sqlQueryWithoutImage, id, car_name, no_of_seats, rent_price, null);
       } else {
-            updateVehicleInfo(sqlQueryWithImage, id, car_name, no_of_seats, rent_price, availability, path);
+            updateVehicleInfo(sqlQueryWithImage, id, car_name, no_of_seats, rent_price, path);
       }
    }
 
-   private void updateVehicleInfo(String sqlQuery, int id, String car_name, int no_of_seats, double rent_price, boolean availability, String path) throws IOException {
+   private void updateVehicleInfo(String sqlQuery, int id, String car_name, int no_of_seats, double rent_price, String path) throws IOException {
       try (Connection con = DriverManager.getConnection(db.getUrl(), db.getUser(), db.getPass());
            PreparedStatement statement = con.prepareStatement(sqlQuery)) {
 
@@ -319,7 +308,7 @@ public class ManageCarDialog extends javax.swing.JDialog {
             statement.setString(1, car_name);
             statement.setInt(2, no_of_seats);
             statement.setDouble(3, rent_price);
-            statement.setBoolean(4, availability);
+            statement.setBoolean(4, true);
             
         if (is != null) {
             statement.setBlob(5, is);
@@ -370,7 +359,6 @@ public class ManageCarDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CAR_ID;
     private javax.swing.JTextField No_of_seats_txt;
-    private javax.swing.JCheckBox available_cb;
     private javax.swing.JTextField car_name_txt;
     private javax.swing.JButton delete_button;
     private javax.swing.JButton edit_button;

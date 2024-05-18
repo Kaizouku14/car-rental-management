@@ -302,7 +302,7 @@ public class AdminCarPanel extends TabbedForm implements EventListener{
                     }
                         
                     new ManageCarDialog(parentFrame ,true ,(int) data[0] ,(String) data[1] ,(int) data[2] ,
-                            (double) data[3] ,(String) data[4] , listener)
+                            (double) data[3], listener)
                                 .setVisible(true);
                     }
                 }
